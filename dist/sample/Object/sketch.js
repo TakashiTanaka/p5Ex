@@ -1,4 +1,4 @@
-const Obj = p5Ex.Object;
+const Obj = p5ex.Object;
 
 function setup() {
   createCanvas(1000, 1000);

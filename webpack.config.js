@@ -11,9 +11,9 @@ module.exports = {
 
   /* 出力先 */
   output: {
-    filename: 'p5Ex.js',
+    filename: 'p5ex.js',
     library: {
-      name: 'p5Ex',
+      name: 'p5ex',
       type: 'window',
     },
   },

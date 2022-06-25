@@ -1,4 +1,7 @@
-const createFullCanvas = () => createCanvas(windowWidth, windowHeight);
+/**
+ * 画面領域一杯のカンバスを作成する
+ */
+export const createFullCanvas = () => createCanvas(windowWidth, windowHeight);
 
 // グリッドを描く
 const drawGrid = unitSize => {
@@ -80,5 +83,3 @@ const kerningText = (word, value, y) => {
     text(char, n * value, y);
   });
 };
-
-export { initFont, drawEqDivLine, drawRepeatText, fSin, fCos, setOrigin, drawGrid, kerningText };
