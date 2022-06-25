@@ -1,5 +1,5 @@
 {
-  "name": "@takashitanaka/p5ex",
+  "name": "p5-ex",
   "version": "1.0.0",
   "description": "",
   "main": "./dist/p5Ex.js",
