@@ -1,8 +1,8 @@
 {
-  "name": "@takashitanaka/p5ex",
+  "name": "my-p5-ex",
   "version": "1.0.0",
   "description": "",
-  "main": "./dist/p5Ex.js",
+  "main": "./dist/p5ex.js",
   "directories": {
     "test": "test"
   },
