@@ -3,6 +3,14 @@
  */
 export const createFullCanvas = () => createCanvas(windowWidth, windowHeight);
 
+// ドロップシャドウ
+export const dropShadow = ({ x = 4, y = 4, blur = 4, color = 'black' }) => {
+  drawingContext.shadowOffsetX = x;
+  drawingContext.shadowOffsetY = y;
+  drawingContext.shadowBlur = blur;
+  drawingContext.shadowColor = color;
+};
+
 // グリッドを描く
 const drawGrid = unitSize => {
   const iterator = (iNum, func) => {
