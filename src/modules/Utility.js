@@ -30,3 +30,17 @@ export class Mover {
     this.target.add(this.s);
   }
 }
+
+export class Iterator {
+  constructor(count, fn) {
+    this.count = count;
+    this.fn = fn;
+    this.start();
+  }
+
+  start() {
+    for (let i = 0; i < this.count; i++) {
+      this.fn(i);
+    }
+  }
+}
