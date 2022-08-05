@@ -47,6 +47,7 @@ export class ExEllipse extends Obj {
   }
 
   createPoints() {
+    this.points = [];
     for (let i = 0; i <= this.pointNum; i++) {
       this.points.push(
         createVector(
