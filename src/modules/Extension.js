@@ -1,5 +1,7 @@
 /**
  * extension of line
+ * @param { p5.Vector } vector1 - ベクター1
+ * @param { p5.Vector } vector2 - ベクター2
  */
 export const exLine = (vector1, vector2) => line(vector1.x, vector1.y, vector2.x, vector2.y);
 
