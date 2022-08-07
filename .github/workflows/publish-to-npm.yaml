@@ -20,7 +20,7 @@ jobs:
         run: npx can-npm-publish --verbose
 
       - name: Install npm packages
-        run: npm Install
+        run: npm install
 
       - name: build
         run: npm run build
