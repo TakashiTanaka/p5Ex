@@ -1,0 +1,31 @@
+name: publish-to-npm
+on:
+  push:
+    branches:
+      - main
+jobs:
+  publish-to-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3 # チェックアウト
+
+      - name: Setup Node
+        uses: actions/setup-node@v3 # 使用するnodeのバージョン指定
+        with:
+          node-version: 16
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Check can publish
+        run: npx can-npm-publish --verbose
+
+      - name: Install npm packages
+        run: npm Install
+
+      - name: build
+        run: npm run build
+
+      - name: publish
+        run: npm publish
+        env :
+          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
