@@ -1,6 +1,6 @@
 {
   "name": "my-p5-ex",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "",
   "main": "./dist/p5ex.js",
   "directories": {
