@@ -7,8 +7,57 @@ export const exLine = (vector1, vector2) => line(vector1.x, vector1.y, vector2.x
 
 /**
  * extension of text
+ * @param {string} string
+ * @param {p5.Vector} vector
+ * @param {number} size
+ * @param {{
+ *     align: 'corner' | 'center',
+ *     background: {
+ *       visible: boolean,
+ *       color: p5.Color,
+ *       border: {
+ *         visible: boolean,
+ *         color: p5.Color,
+ *         weight: number,
+ *       },
+ *     },
+ *   }} options
  */
-export const exText = (vector, str) => text(str, vector.x, vector.y);
+export const exText = (
+  string,
+  vector,
+  size,
+  options = {
+    align: 'corner',
+    background: {
+      visible: false,
+      color: 0,
+      border: {
+        visible: false,
+        color: 1,
+        weight: 2,
+      },
+    },
+  }
+) => {
+  const isAlignCorner = options.align === 'corner';
+  textSize(size);
+  const align = isAlignCorner ? CORNER : CENTER;
+  textAlign(isAlignCorner ? LEFT : CENTER, isAlignCorner ? TOP : CENTER);
+  rectMode(align);
+  if (options.background.visible) {
+    push();
+    noStroke();
+    options.background.border.visible &&
+      stroke(options.background.border.color) &&
+      strokeWeight(options.background.border.weight);
+    fill(options.background.color);
+    exRect(vector, textWidth(string), size);
+    pop();
+  }
+	text(string, vector.x, vector.y)
+};
+
 
 /**
  * extension of circle
