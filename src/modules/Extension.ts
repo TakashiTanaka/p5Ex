@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /**
  * extension of line
  * @param { p5.Vector } vector1 - ベクター1

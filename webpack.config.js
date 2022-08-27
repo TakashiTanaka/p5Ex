@@ -7,7 +7,7 @@ module.exports = {
   mode: process.env.MODE === 'production' ? 'production' : 'development',
 
   /* エントリーポイント */
-  entry: './src/index.js',
+  entry: './src/index.ts',
 
   /* 出力先 */
   output: {
@@ -33,6 +33,20 @@ module.exports = {
         extractComments: false,
       }),
     ],
+  },
+
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
   },
 
   /* キャッシュをtrueで差分ビルド */

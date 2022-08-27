@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import * as ex from './Extension';
 
 export class Obj {

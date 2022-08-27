@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /**
  * 画面領域一杯のカンバスを作成する
  * @returns {function} createCanvas(windowWidth, windowHeight)

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 // 壁との衝突を検知
 export class CollisionChecker {
   constructor(target) {
