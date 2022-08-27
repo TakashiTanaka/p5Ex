@@ -1,35 +1,63 @@
+import type p5 from 'p5';
+
+declare global {
+  var line: typeof p5.prototype.line;
+  var circle: typeof p5.prototype.circle;
+  var triangle: typeof p5.prototype.triangle;
+  var rect: typeof p5.prototype.rect;
+  var point: typeof p5.prototype.point;
+  var vertex: typeof p5.prototype.vertex;
+  var curveVertex: typeof p5.prototype.curveVertex;
+  var text: typeof p5.prototype.text;
+  var textSize: typeof p5.prototype.textSize;
+  var textAlign: typeof p5.prototype.textAlign;
+  var textWidth: typeof p5.prototype.textWidth;
+  var rectMode: typeof p5.prototype.rectMode;
+  var push: typeof p5.prototype.push;
+  var pop: typeof p5.prototype.pop;
+  var noStroke: typeof p5.prototype.noStroke;
+  var stroke: typeof p5.prototype.stroke;
+  var strokeWeight: typeof p5.prototype.strokeWeight;
+  var fill: typeof p5.prototype.fill;
+  var CORNER: typeof p5.prototype.CORNER;
+  var CENTER: typeof p5.prototype.CENTER;
+  var LEFT: typeof p5.prototype.LEFT;
+  var TOP: typeof p5.prototype.TOP;
+}
+
 // @ts-nocheck
 
 /**
- * extension of line
- * @param { p5.Vector } vector1 - ベクター1
- * @param { p5.Vector } vector2 - ベクター2
+ * line()の拡張
+ * @param vector1 - ベクトル1
+ * @param vector2 - ベクトル2
  */
-export const exLine = (vector1, vector2) => line(vector1.x, vector1.y, vector2.x, vector2.y);
+export const exLine = (vector1: p5.Vector, vector2: p5.Vector) =>
+  line(vector1.x, vector1.y, vector2.x, vector2.y);
 
 /**
- * extension of text
- * @param {string} string
- * @param {p5.Vector} vector
- * @param {number} size
- * @param {{
- *     align: 'corner' | 'center',
- *     background: {
- *       visible: boolean,
- *       color: p5.Color,
- *       border: {
- *         visible: boolean,
- *         color: p5.Color,
- *         weight: number,
- *       },
- *     },
- *   }} options
+ * text()の拡張
+ * @param string - 文字列
+ * @param vector - ベクトル
+ * @param size - 文字のサイズ
+ * @param options - オプション
  */
 export const exText = (
-  string,
-  vector,
-  size,
-  options = {
+  string: string,
+  vector: p5.Vector,
+  size: number,
+  options: {
+    align: string;
+    background: {
+      visible: boolean;
+      color: any;
+      border: {
+        visible: boolean;
+        color: any;
+        weight: number;
+      };
+    };
+  } = {
     align: 'corner',
     background: {
       visible: false,
@@ -57,37 +85,49 @@ export const exText = (
     exRect(vector, textWidth(string), size);
     pop();
   }
-	text(string, vector.x, vector.y)
+  text(string, vector.x, vector.y);
 };
 
+/**
+ * circle()の拡張
+ * @param vector - ベクトル
+ * @param diameter - 直径
+ */
+export const exCircle = (vector: p5.Vector, diameter: number) =>
+  circle(vector.x, vector.y, diameter);
 
 /**
- * extension of circle
+ * triangle()の拡張
+ * @param vector1 - ベクトル1
+ * @param vector2 - ベクトル2
+ * @param vector3 - ベクトル3
  */
-export const exCircle = (vector, diameter) => circle(vector.x, vector.y, diameter);
+export const exTriangle = (vector1: p5.Vector, vector2: p5.Vector, vector3: p5.Vector) =>
+  triangle(vector1.x, vector1.y, vector2.x, vector2.y, vector3.x, vector3.y);
 
 /**
- * extension of triangle
+ * rect()の拡張
+ * @param vector - ベクトル
+ * @param width - 幅
+ * @param height - 高さ
  */
-export const exTriangle = (vector1, vector2, vector3) =>
-triangle(vector1.x, vector1.y, vector2.x, vector2.y, vector3.x, vector3.y);
+export const exRect = (vector: p5.Vector, width: number, height: number) =>
+rect(vector.x, vector.y, width, height);
 
 /**
- * extension of rect
+ * point()の拡張
+ * @param vector - ベクトル
  */
-export const exRect = (vector, width, height) => rect(vector.x, vector.y, width, height);
+export const exPoint = (vector: p5.Vector) => point(vector.x, vector.y);
 
 /**
- * extension of point
+ * vertexの拡張
+ * @param vector - ベクトル
  */
-export const exPoint = vector => point(vector.x, vector.y);
+export const exVertex = (vector: p5.Vector) => vertex(vector.x, vector.y);
 
 /**
- * extension of vertex
+ * curveVertexの拡張
+ * @param vector - ベクトル
  */
-export const exVertex = vector => vertex(vector.x, vector.y);
-
-/**
- * extension of curveVertex
- */
-export const exCurveVertex = vector => curveVertex(vector.x, vector.y);
+export const exCurveVertex = (vector: p5.Vector) => curveVertex(vector.x, vector.y);
