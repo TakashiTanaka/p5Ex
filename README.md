@@ -2,6 +2,8 @@
 
 p5.jsの拡張機能ライブラリ
 
+[p5Ex](https://www.npmjs.com/package/my-p5-ex)
+
 ## 作業方法
 
 スケッチを描きながら並行してすすめる。もしスケッチを描いてp5exに変更を加えた場合はpublishする
