@@ -1,3 +1,4 @@
+import { dropShadow } from './Function';
 import type p5 from 'p5';
 
 declare global {
@@ -19,6 +20,7 @@ declare global {
   var stroke: typeof p5.prototype.stroke;
   var strokeWeight: typeof p5.prototype.strokeWeight;
   var fill: typeof p5.prototype.fill;
+  var drawingContext: typeof p5.prototype.drawingContext;
   var CORNER: typeof p5.prototype.CORNER;
   var CENTER: typeof p5.prototype.CENTER;
   var LEFT: typeof p5.prototype.LEFT;
@@ -46,7 +48,7 @@ export const exText = (
   string: string,
   vector: p5.Vector,
   size: number,
-  options: {
+  options?: {
     align: string;
     background: {
       visible: boolean;
@@ -57,7 +59,18 @@ export const exText = (
         weight: number;
       };
     };
-  } = {
+    dropShadow: {
+      visible: boolean;
+      offset: {
+        x: number;
+        y: number;
+      };
+      blur: number;
+      color: any;
+    };
+  }
+) => {
+  const defaultOptions = {
     align: 'corner',
     background: {
       visible: false,
@@ -68,24 +81,45 @@ export const exText = (
         weight: 2,
       },
     },
+    dropShadow: {
+      visible: false,
+      offset: {
+        x: 4,
+        y: 4,
+      },
+      blur: 4,
+      color: 1,
+    },
+  };
+
+  const useOptions = { ...defaultOptions, ...options };
+
+  push();
+  if (useOptions.dropShadow.visible) {
+    dropShadow({
+      x: useOptions.dropShadow.offset.x,
+      y: useOptions.dropShadow.offset.y,
+      blur: useOptions.dropShadow.blur,
+      color: useOptions.dropShadow.color,
+    });
   }
-) => {
-  const isAlignCorner = options.align === 'corner';
+  const isAlignCorner = useOptions.align === 'corner';
   textSize(size);
   const align = isAlignCorner ? CORNER : CENTER;
   textAlign(isAlignCorner ? LEFT : CENTER, isAlignCorner ? TOP : CENTER);
   rectMode(align);
-  if (options.background.visible) {
+  if (useOptions.background.visible) {
     push();
     noStroke();
-    options.background.border.visible &&
-      stroke(options.background.border.color) &&
-      strokeWeight(options.background.border.weight);
-    fill(options.background.color);
+    useOptions.background.border.visible &&
+      stroke(useOptions.background.border.color) &&
+      strokeWeight(useOptions.background.border.weight);
+    fill(useOptions.background.color);
     exRect(vector, textWidth(string), size);
     pop();
   }
   text(string, vector.x, vector.y);
+  pop();
 };
 
 /**
@@ -112,7 +146,7 @@ export const exTriangle = (vector1: p5.Vector, vector2: p5.Vector, vector3: p5.V
  * @param height - 高さ
  */
 export const exRect = (vector: p5.Vector, width: number, height: number) =>
-rect(vector.x, vector.y, width, height);
+  rect(vector.x, vector.y, width, height);
 
 /**
  * point()の拡張
