@@ -8,9 +8,19 @@ export const createFullCanvas = () => createCanvas(windowWidth, windowHeight);
 
 /**
  * ドロップシャドウ
- * @param {{ x: number, y: number, blur: number, color: number | string }} options
+ * @param options - オプション
  */
-export const dropShadow = ({ x = 4, y = 4, blur = 4, color = 'black' }) => {
+export const dropShadow = ({
+  x = 4,
+  y = 4,
+  blur = 4,
+  color = 'black',
+}: {
+  x: number;
+  y: number;
+  blur: number;
+  color: number | string;
+}) => {
   drawingContext.shadowOffsetX = x;
   drawingContext.shadowOffsetY = y;
   drawingContext.shadowBlur = blur;
