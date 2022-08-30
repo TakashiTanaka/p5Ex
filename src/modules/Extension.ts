@@ -1,7 +1,9 @@
-import { dropShadow } from './Function';
+import { dropShadow, rotateCenter } from './Function';
 import type p5 from 'p5';
+import { CENTER, CORNER } from 'p5';
 
 declare global {
+  var color: typeof p5.prototype.color;
   var line: typeof p5.prototype.line;
   var circle: typeof p5.prototype.circle;
   var triangle: typeof p5.prototype.triangle;
@@ -20,12 +22,41 @@ declare global {
   var stroke: typeof p5.prototype.stroke;
   var strokeWeight: typeof p5.prototype.strokeWeight;
   var fill: typeof p5.prototype.fill;
+  var translate: typeof p5.prototype.translate;
   var drawingContext: typeof p5.prototype.drawingContext;
   var CORNER: typeof p5.prototype.CORNER;
   var CENTER: typeof p5.prototype.CENTER;
   var LEFT: typeof p5.prototype.LEFT;
   var TOP: typeof p5.prototype.TOP;
 }
+
+type Background = {
+  visible: boolean;
+  color: any;
+  border: {
+    visible: boolean;
+    color: any;
+    weight: number;
+  };
+};
+
+type DropShadow = {
+  visible: boolean;
+  offset: {
+    x: number;
+    y: number;
+  };
+  blur: number;
+  color: any;
+};
+
+type Align = 'corner' | 'center';
+
+type Border = {
+  visible: false;
+  color: 1;
+  weight: 2;
+};
 
 // @ts-nocheck
 
@@ -44,33 +75,14 @@ export const exLine = (vector1: p5.Vector, vector2: p5.Vector) =>
  * @param size - 文字のサイズ
  * @param options - オプション
  */
+
 export const exText = (
   string: string,
   vector: p5.Vector,
   size: number,
-  options?: {
-    align: string;
-    background: {
-      visible: boolean;
-      color: any;
-      border: {
-        visible: boolean;
-        color: any;
-        weight: number;
-      };
-    };
-    dropShadow: {
-      visible: boolean;
-      offset: {
-        x: number;
-        y: number;
-      };
-      blur: number;
-      color: any;
-    };
-  }
+  options?: { align: Align; background: Background; dropShadow: DropShadow }
 ) => {
-  const defaultOptions = {
+  const defaultOptions: { align: Align; background: Background; dropShadow: DropShadow } = {
     align: 'corner',
     background: {
       visible: false,

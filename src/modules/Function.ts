@@ -1,5 +1,8 @@
 // @ts-nocheck
 
+import p5 from 'p5';
+import { exTranslate } from './Extension';
+
 /**
  * 画面領域一杯のカンバスを作成する
  * @returns {function} createCanvas(windowWidth, windowHeight)
@@ -10,21 +13,18 @@ export const createFullCanvas = () => createCanvas(windowWidth, windowHeight);
  * ドロップシャドウ
  * @param options - オプション
  */
-export const dropShadow = ({
-  x = 4,
-  y = 4,
-  blur = 4,
-  color = 'black',
-}: {
+export const dropShadow = (options: {
   x: number;
   y: number;
   blur: number;
   color: number | string;
 }) => {
-  drawingContext.shadowOffsetX = x;
-  drawingContext.shadowOffsetY = y;
-  drawingContext.shadowBlur = blur;
-  drawingContext.shadowColor = color;
+  const defaultOptions = { x: 4, y: 4, blur: 4, color: 'black' };
+  const useOptions = { ...defaultOptions, ...options };
+  drawingContext.shadowOffsetX = useOptions.x;
+  drawingContext.shadowOffsetY = useOptions.y;
+  drawingContext.shadowBlur = useOptions.blur;
+  drawingContext.shadowColor = useOptions.color;
 };
 
 /**
