@@ -97,6 +97,19 @@ export const lerpVectors = (vectors, interval = 16, isClose = false) => {
   });
 };
 
+/**
+ * オブジェクトの中央で回転
+ * @param vector ベクトル
+ * @param radian 弧度
+ */
+export const rotateCenter = (vector: p5.Vector, radian: number = 0) => {
+  exTranslate(vector);
+  rotate(radian);
+  push();
+  exTranslate(vector.mult(-1));
+  pop();
+};
+
 // グリッドを描く
 const drawGrid = unitSize => {
   const iterator = (iNum, func) => {
