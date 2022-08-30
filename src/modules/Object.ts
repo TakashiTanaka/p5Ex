@@ -1,9 +1,10 @@
 // @ts-nocheck
 
+import type p5 from 'p5';
 import * as ex from './Extension';
 
 export class Obj {
-  constructor(vector, width, height) {
+  constructor(vector: p5.Vector, width: number, height: number) {
     this.position = vector;
     this.width = width;
     this.height = height;
