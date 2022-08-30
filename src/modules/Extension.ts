@@ -177,3 +177,9 @@ export const exVertex = (vector: p5.Vector) => vertex(vector.x, vector.y);
  * @param vector - ベクトル
  */
 export const exCurveVertex = (vector: p5.Vector) => curveVertex(vector.x, vector.y);
+
+/**
+ * translate()
+ * @param vector - ベクトル
+ */
+export const exTranslate = (vector: p5.Vector) => translate(vector.x, vector.y);
