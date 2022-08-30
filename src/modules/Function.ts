@@ -40,6 +40,11 @@ export const randomInt = (min, max) => {
 };
 
 /**
+ * ランダムな色を返す関数
+ */
+export const randomColor = () => color(random(), random(), random());
+
+/**
  * コールバック関数を指定回数繰り返す
  * @param {number} count 繰り返す回数（整数）
  * @param {function} fn コールバック関数
