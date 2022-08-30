@@ -157,8 +157,71 @@ export const exTriangle = (vector1: p5.Vector, vector2: p5.Vector, vector3: p5.V
  * @param width - 幅
  * @param height - 高さ
  */
-export const exRect = (vector: p5.Vector, width: number, height: number) =>
-  rect(vector.x, vector.y, width, height);
+export const exRect = (
+  vector: p5.Vector,
+  width: number,
+  height: number,
+  options?: {
+    color: number | string;
+    border: Border;
+    dropShadow: DropShadow;
+    rotate: boolean | number;
+    rectMode: CENTER | CORNER;
+  }
+) => {
+  const defaultOptions = {
+    color: 0,
+    border: {
+      visible: false,
+      color: 1,
+      weight: 2,
+    },
+    dropShadow: {
+      visible: false,
+      offset: {
+        x: 4,
+        y: 4,
+      },
+      blur: 4,
+      color: 1,
+    },
+    rotate: false,
+    rectMode: CORNER,
+  };
+
+  const useOptions = { ...defaultOptions, ...options };
+
+  push();
+
+  rectMode(useOptions.rectMode);
+  if(typeof useOptions.rotate === 'number'){
+    rotateCenter(vector, useOptions.rotate);
+  }
+
+  if (useOptions.dropShadow.visible) {
+    dropShadow({
+      x: useOptions.dropShadow.offset.x,
+      y: useOptions.dropShadow.offset.y,
+      blur: useOptions.dropShadow.blur,
+      color: useOptions.dropShadow.color,
+    });
+  }
+
+  if(typeof useOptions.color === 'string') {
+    fill(useOptions.color);
+  } else {
+    fill(useOptions.color);
+  }
+
+  noStroke();
+  useOptions.border.visible &&
+    stroke(useOptions.border.color) &&
+    strokeWeight(useOptions.border.weight);
+
+  rect(0, 0, width, height);
+
+  pop();
+};
 
 /**
  * point()の拡張
