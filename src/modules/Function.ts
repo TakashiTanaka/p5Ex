@@ -339,3 +339,18 @@ export const resetAppearance = () => {
   noStroke();
   noFill();
 }
+
+/** 
+ * undefinedか判定
+*/
+export const isUndefined = (value: any): boolean => {
+  return value === void 0;
+}
+
+/** 
+ * オプション値の初期値を設定
+*/
+export const initArgument = (value: any): any => {
+  return value === void 0;
+}
+
