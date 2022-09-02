@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "webpack serve",
+    "preBuild": "MODE=development webpack build",
     "build": "MODE=production webpack build"
   },
   "keywords": [],
