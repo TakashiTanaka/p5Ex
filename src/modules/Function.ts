@@ -317,9 +317,17 @@ const mkAlphabetArray = () => {
 
 /**
  * ランダムなアルファベットを返す関数
- * @return { String }
  */
-const randomAlphabet = () => {
+export const randomAlphabet = (): string => {
   let alphabets = mkAlphabetArray();
   return alphabets[randomInt(0, alphabets.length - 1)];
 };
+
+
+/**
+ * strokeとfillをリセットする関数
+ */ 
+export const resetAppearance = () => {
+  noStroke();
+  noFill();
+}
