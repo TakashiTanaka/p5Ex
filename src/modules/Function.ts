@@ -9,6 +9,14 @@ import { exTranslate } from './Extension';
  */
 export const createFullCanvas = () => createCanvas(windowWidth, windowHeight);
 
+/** 
+ * ブラー
+ * @param amount - ブラー量
+ */ 
+export const blur = (amount: number) => {
+  drawingContext.filter = `blur(${amount}px)`;
+}
+
 /**
  * ドロップシャドウ
  * @param options - オプション
