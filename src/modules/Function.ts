@@ -22,17 +22,19 @@ export const blur = (amount: number) => {
  * @param options - オプション
  */
 export const dropShadow = (options: {
-  x: number;
-  y: number;
-  blur: number;
-  color: number | string;
+  x?: number;
+  y?: number;
+  blur?: number;
+  color?: string | p5.Color;
 }) => {
-  const defaultOptions = { x: 4, y: 4, blur: 4, color: 'black' };
-  const useOptions = { ...defaultOptions, ...options };
-  drawingContext.shadowOffsetX = useOptions.x;
-  drawingContext.shadowOffsetY = useOptions.y;
-  drawingContext.shadowBlur = useOptions.blur;
-  drawingContext.shadowColor = useOptions.color;
+  const _x = options?.x ?? 4,
+        _y = options?.y ?? 4,
+        _blur = options?.blur ?? 4,
+        _color = options?.color ?? 'black';
+  drawingContext.shadowOffsetX = _x;
+  drawingContext.shadowOffsetY = _y;
+  drawingContext.shadowBlur = _blur;
+  drawingContext.shadowColor = _color;
 };
 
 /**
