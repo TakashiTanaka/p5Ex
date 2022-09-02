@@ -14,7 +14,7 @@ module.exports = {
     filename: 'p5ex.js',
     library: {
       name: 'p5ex',
-      type: 'window',
+      type: 'amd',
     },
   },
 
@@ -30,7 +30,7 @@ module.exports = {
   optimization: {
     minimizer: [
       new TerserPlugin({
-        extractComments: false,
+        extractComments: true,
       }),
     ],
   },
