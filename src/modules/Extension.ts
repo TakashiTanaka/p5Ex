@@ -1,4 +1,4 @@
-import { dropShadow, rotateCenter } from './Function';
+import { dropShadow, rotateCenter, resetAppearance } from './Function';
 import type p5 from 'p5';
 import { CENTER, CORNER } from 'p5';
 
@@ -33,10 +33,10 @@ declare global {
 type Background = {
   visible: boolean;
   color: any;
-  border: {
+  border?: {
     visible: boolean;
-    color: any;
-    weight: number;
+    color?: any;
+    weight?: number;
   };
 };
 
@@ -60,6 +60,13 @@ type Border = {
 
 // @ts-nocheck
 
+class exClass {
+  constructor(public vector: p5.Vector, public size: number) {
+    this.vector = vector;
+    this.size = size;
+  }
+}
+
 /**
  * line()の拡張
  * @param vector1 - ベクトル1
@@ -80,9 +87,22 @@ export const exText = (
   string: string,
   vector: p5.Vector,
   size: number,
-  options?: { align: Align; background: Background; dropShadow: DropShadow }
+  options?: {
+    color?: any;
+    align?: Align;
+    background?: Background;
+    dropShadow?: DropShadow;
+    rotate?: boolean | number;
+  }
 ) => {
-  const defaultOptions: { align: Align; background: Background; dropShadow: DropShadow } = {
+  const defaultOptions: {
+    color: any;
+    align: Align;
+    background: Background;
+    dropShadow: DropShadow;
+    rotate: boolean | number;
+  } = {
+    color: 0,
     align: 'corner',
     background: {
       visible: false,
@@ -102,6 +122,7 @@ export const exText = (
       blur: 4,
       color: 1,
     },
+    rotate: false,
   };
 
   const useOptions = { ...defaultOptions, ...options };
@@ -115,22 +136,32 @@ export const exText = (
       color: useOptions.dropShadow.color,
     });
   }
-  const isAlignCorner = useOptions.align === 'corner';
   textSize(size);
+
+  if (typeof useOptions.rotate === 'number') {
+    rotateCenter(vector, useOptions.rotate);
+  } else {
+    exTranslate(vector);
+  }
+
+  const isAlignCorner = useOptions.align === 'corner';
   const align = isAlignCorner ? CORNER : CENTER;
   textAlign(isAlignCorner ? LEFT : CENTER, isAlignCorner ? TOP : CENTER);
   rectMode(align);
+
   if (useOptions.background.visible) {
     push();
-    noStroke();
+    resetAppearance();
     useOptions.background.border.visible &&
       stroke(useOptions.background.border.color) &&
       strokeWeight(useOptions.background.border.weight);
-    fill(useOptions.background.color);
-    exRect(vector, textWidth(string), size);
+    exRect(vector, textWidth(string), size, { color: useOptions.background.color });
     pop();
   }
-  text(string, vector.x, vector.y);
+
+  fill(useOptions.color);
+  text(string, 0, 0);
+
   pop();
 };
 
@@ -162,11 +193,11 @@ export const exRect = (
   width: number,
   height: number,
   options?: {
-    color: number | string;
-    border: Border;
-    dropShadow: DropShadow;
-    rotate: boolean | number;
-    rectMode: CENTER | CORNER;
+    color: any;
+    border?: Border;
+    dropShadow?: DropShadow;
+    rotate?: boolean | number;
+    rectMode?: CENTER | CORNER;
   }
 ) => {
   const defaultOptions = {
@@ -194,7 +225,7 @@ export const exRect = (
   push();
 
   rectMode(useOptions.rectMode);
-  if(typeof useOptions.rotate === 'number'){
+  if (typeof useOptions.rotate === 'number') {
     rotateCenter(vector, useOptions.rotate);
   }
 
@@ -207,7 +238,7 @@ export const exRect = (
     });
   }
 
-  if(typeof useOptions.color === 'string') {
+  if (typeof useOptions.color === 'string') {
     fill(useOptions.color);
   } else {
     fill(useOptions.color);
