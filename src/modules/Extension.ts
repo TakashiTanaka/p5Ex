@@ -1,4 +1,4 @@
-import { dropShadow, rotateCenter, resetAppearance } from './Function';
+import { dropShadow, rotateCenter, resetAppearance, blur } from './Function';
 import type p5 from 'p5';
 import { CENTER, CORNER } from 'p5';
 
@@ -23,6 +23,9 @@ declare global {
   var strokeWeight: typeof p5.prototype.strokeWeight;
   var fill: typeof p5.prototype.fill;
   var translate: typeof p5.prototype.translate;
+  var createVector: typeof p5.prototype.createVector;
+  var width: typeof p5.prototype.width;
+  var height: typeof p5.prototype.height;
   var drawingContext: typeof p5.prototype.drawingContext;
   var CORNER: typeof p5.prototype.CORNER;
   var CENTER: typeof p5.prototype.CENTER;
@@ -32,22 +35,23 @@ declare global {
 
 type Background = {
   visible: boolean;
-  color: any;
+  color?: any;
   border?: {
-    visible: boolean;
+    visible?: boolean;
     color?: any;
     weight?: number;
   };
+  blur?: number | boolean
 };
 
 type DropShadow = {
   visible: boolean;
-  offset: {
-    x: number;
-    y: number;
+  offset?: {
+    x?: number;
+    y?: number;
   };
-  blur: number;
-  color: any;
+  blur?: number;
+  color?: any;
 };
 
 type Align = 'corner' | 'center';
@@ -93,74 +97,73 @@ export const exText = (
     background?: Background;
     dropShadow?: DropShadow;
     rotate?: boolean | number;
+    blur?: boolean | number; 
   }
 ) => {
-  const defaultOptions: {
-    color: any;
-    align: Align;
-    background: Background;
-    dropShadow: DropShadow;
-    rotate: boolean | number;
-  } = {
-    color: 0,
-    align: 'corner',
-    background: {
-      visible: false,
-      color: 0,
-      border: {
-        visible: false,
-        color: 1,
-        weight: 2,
-      },
-    },
-    dropShadow: {
-      visible: false,
-      offset: {
-        x: 4,
-        y: 4,
-      },
-      blur: 4,
-      color: 1,
-    },
-    rotate: false,
-  };
-
-  const useOptions = { ...defaultOptions, ...options };
+  /* options */
+  const _string = string ?? 'p5Ex', 
+        _vector = vector ?? createVector(width / 2, height / 2),
+        _size = size ?? 16,
+        _color = options?.color ?? 0,
+        _align = options?.align ?? 'corner',
+        _background = options?.background ?? false,
+        _backgroundVisible = options?.background?.visible ?? false,
+        _backgroundColor = options?.background?.color ?? 0,
+        _backgroundBorder = options?.background?.border ?? false,
+        _backgroundBorderVisible = options?.background?.border?.visible ?? false,
+        _backgroundBorderColor = options?.background?.border?.color ?? 0,
+        _backgroundBorderWeight = options?.background?.border?.weight ?? 2,
+        _dropShadow = options?.dropShadow ?? false,
+        _dropShadowVisible = options?.dropShadow?.visible ?? false,
+        _dropShadowOffsetX = options?.dropShadow?.offset?.x ?? 4,
+        _dropShadowOffsetY = options?.dropShadow?.offset?.y ?? 4,
+        _dropShadowBlur = options?.dropShadow?.blur ?? 4,
+        _dropShadowColor = options?.dropShadow?.color ?? 1,
+        _rotate = options?.rotate ?? false,
+        _blur = options?.blur ?? false;
 
   push();
-  if (useOptions.dropShadow.visible) {
-    dropShadow({
-      x: useOptions.dropShadow.offset.x,
-      y: useOptions.dropShadow.offset.y,
-      blur: useOptions.dropShadow.blur,
-      color: useOptions.dropShadow.color,
-    });
-  }
-  textSize(size);
 
-  if (typeof useOptions.rotate === 'number') {
-    rotateCenter(vector, useOptions.rotate);
+  textSize(_size);
+
+  if (_rotate && typeof _rotate !== 'boolean') {
+    rotateCenter(_vector, _rotate);
   } else {
-    exTranslate(vector);
+    exTranslate(_vector);
   }
 
-  const isAlignCorner = useOptions.align === 'corner';
+  const isAlignCorner = _align === 'corner';
   const align = isAlignCorner ? CORNER : CENTER;
   textAlign(isAlignCorner ? LEFT : CENTER, isAlignCorner ? TOP : CENTER);
   rectMode(align);
 
-  if (useOptions.background.visible) {
+  if (_background && _backgroundVisible) {
     push();
     resetAppearance();
-    useOptions.background.border.visible &&
-      stroke(useOptions.background.border.color) &&
-      strokeWeight(useOptions.background.border.weight);
-    exRect(vector, textWidth(string), size, { color: useOptions.background.color });
+    if(_backgroundBorder && _backgroundBorderVisible){
+      stroke(_backgroundBorderColor);
+      strokeWeight(_backgroundBorderWeight);
+    }
+    exRect(_vector, textWidth(_string), _size, { color: _backgroundColor });
     pop();
   }
 
-  fill(useOptions.color);
-  text(string, 0, 0);
+  fill(_color);
+
+  if (_dropShadow && _dropShadowVisible) {
+    dropShadow({
+      x: _dropShadowOffsetX,
+      y: _dropShadowOffsetY,
+      blur: _dropShadowBlur,
+      color: _dropShadowColor,
+    });
+  }
+
+  if(typeof _blur === 'number') {
+    blur(_blur);
+  }
+
+  text(_string, 0, 0);
 
   pop();
 };
