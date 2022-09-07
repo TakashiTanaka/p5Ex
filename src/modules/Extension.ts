@@ -1,47 +1,15 @@
 import { dropShadow, rotateCenter, resetAppearance, blur } from './Function';
 import type p5 from 'p5';
-import { CENTER, CORNER } from 'p5';
 
-declare global {
-  var color: typeof p5.prototype.color;
-  var line: typeof p5.prototype.line;
-  var circle: typeof p5.prototype.circle;
-  var triangle: typeof p5.prototype.triangle;
-  var rect: typeof p5.prototype.rect;
-  var point: typeof p5.prototype.point;
-  var vertex: typeof p5.prototype.vertex;
-  var curveVertex: typeof p5.prototype.curveVertex;
-  var text: typeof p5.prototype.text;
-  var textSize: typeof p5.prototype.textSize;
-  var textAlign: typeof p5.prototype.textAlign;
-  var textWidth: typeof p5.prototype.textWidth;
-  var rectMode: typeof p5.prototype.rectMode;
-  var push: typeof p5.prototype.push;
-  var pop: typeof p5.prototype.pop;
-  var noStroke: typeof p5.prototype.noStroke;
-  var stroke: typeof p5.prototype.stroke;
-  var strokeWeight: typeof p5.prototype.strokeWeight;
-  var fill: typeof p5.prototype.fill;
-  var translate: typeof p5.prototype.translate;
-  var createVector: typeof p5.prototype.createVector;
-  var width: typeof p5.prototype.width;
-  var height: typeof p5.prototype.height;
-  var drawingContext: typeof p5.prototype.drawingContext;
-  var CORNER: typeof p5.prototype.CORNER;
-  var CENTER: typeof p5.prototype.CENTER;
-  var LEFT: typeof p5.prototype.LEFT;
-  var TOP: typeof p5.prototype.TOP;
+function implementsColor(arg: any): arg is typeof Color {
+  return arg !== null &&
+    typeof arg === 'object';
 }
 
-type Background = {
-  visible: boolean;
+type Border = {
+  visible?: boolean;
   color?: any;
-  border?: {
-    visible?: boolean;
-    color?: any;
-    weight?: number;
-  };
-  blur?: number | boolean
+  weight?: number;
 };
 
 type DropShadow = {
@@ -56,18 +24,175 @@ type DropShadow = {
 
 type Align = 'corner' | 'center';
 
-type Border = {
-  visible: false;
-  color: 1;
-  weight: 2;
+type Background = {
+  visible: boolean;
+  color?: any;
+  border?: Border;
+  blur?: number | boolean;
+  dropShadow?: DropShadow | boolean;
+};
+
+type Size = { width: number; height: number } | number;
+
+type PrimitiveOptions = {
+  color?: p5.Color | number | string | false;
+  align?: Align;
+  background?: Background;
+  dropShadow?: DropShadow;
+  rotate?: boolean | number;
+  blur?: boolean | number;
+  border?: Border;
 };
 
 // @ts-nocheck
 
-class exClass {
-  constructor(public vector: p5.Vector, public size: number) {
-    this.vector = vector;
-    this.size = size;
+class PrimitiveShape {
+  protected _vector: p5.Vector;
+  protected _size: number | Size;
+  protected _color: p5.Color | string | number | false;
+  protected _align: Align;
+  protected _background: Background | boolean;
+  protected _backgroundVisible: boolean;
+  protected _backgroundColor: any;
+  protected _backgroundBorder: Border | boolean;
+  protected _backgroundBorderVisible: boolean;
+  protected _backgroundBorderColor: any;
+  protected _backgroundBorderWeight: number;
+  protected _dropShadow: DropShadow | boolean;
+  protected _dropShadowVisible: boolean;
+  protected _dropShadowOffsetX: number;
+  protected _dropShadowOffsetY: number;
+  protected _dropShadowBlur: number;
+  protected _dropShadowColor: any;
+  protected _rotate: number | boolean;
+  protected _blur: number | boolean;
+  protected _border: Border | boolean;
+  protected _borderVisible: boolean;
+  protected _borderColor: p5.Color;
+  protected _borderWeight: number;
+
+  constructor(
+    public callback: typeof rect | typeof ellipse | typeof text,
+    public vector: p5.Vector,
+    public size: number | Size,
+    public options?: PrimitiveOptions
+  ) {
+    this.options = options;
+    this._vector = this.vector ?? createVector(width / 2, height / 2);
+    this._size = this.size ?? 16;
+    this._color = this.options?.color ?? 'black';
+    this._align = this.options?.align ?? 'corner';
+    this._background = this.options?.background ?? false;
+    this._backgroundVisible = this.options?.background?.visible ?? false;
+    this._backgroundColor = this.options?.background?.color ?? 0;
+    this._backgroundBorder = this.options?.background?.border ?? false;
+    this._backgroundBorderVisible = this.options?.background?.border?.visible ?? false;
+    this._backgroundBorderColor = this.options?.background?.border?.color ?? 0;
+    this._backgroundBorderWeight = this.options?.background?.border?.weight ?? 2;
+    this._dropShadow = this.options?.dropShadow ?? false;
+    this._dropShadowVisible = this.options?.dropShadow?.visible ?? false;
+    this._dropShadowOffsetX = this.options?.dropShadow?.offset?.x ?? 4;
+    this._dropShadowOffsetY = this.options?.dropShadow?.offset?.y ?? 4;
+    this._dropShadowBlur = this.options?.dropShadow?.blur ?? 4;
+    this._dropShadowColor = this.options?.dropShadow?.color ?? 1;
+    this._rotate = this.options?.rotate ?? false;
+    this._blur = this.options?.blur ?? false;
+    this._border = this.options?.border ?? false;
+    this._borderVisible = this.options?.border?.visible ?? false;
+    this._borderColor = this.options?.border?.color ?? 0;
+    this._borderWeight = this.options?.border?.weight ?? 2;
+  }
+
+  align() {
+    if(this._align === 'corner') {
+      rectMode('corner');
+    } else if(this._align === 'center') {
+      rectMode('center');
+    }
+  }
+
+  rotate() {
+    if (this._rotate && typeof this._rotate !== 'boolean') {
+      rotateCenter(this._vector, this._rotate);
+    } else {
+      exTranslate(this._vector);
+    }
+  }
+
+  dropShadow() {
+    if (this._dropShadow && this._dropShadowVisible) {
+      dropShadow({
+        x: this._dropShadowOffsetX,
+        y: this._dropShadowOffsetY,
+        blur: this._dropShadowBlur,
+        color: this._dropShadowColor,
+      });
+    }
+  }
+
+  blur() {
+    if (typeof this._blur === 'number') {
+      blur(this._blur);
+    }
+  }
+
+  // background() {
+  //   if (this._background && this._backgroundVisible) {
+  //     push();
+  //     resetAppearance();
+  //     if (this._backgroundBorder && this._backgroundBorderVisible) {
+  //       stroke(this._backgroundBorderColor);
+  //       strokeWeight(this._backgroundBorderWeight);
+  //     }
+  //     exRect(this._vector, textWidth(this._string), this._size, { color: this._backgroundColor });
+  //     pop();
+  //   }
+  // }
+
+  fill() {
+    if (this._color === false) {
+      noFill();
+    } else if (typeof this._color === 'string') {
+      fill(this._color);
+    } else if (typeof this._color === 'number') {
+      fill(this._color);
+    } else if(implementsColor(this._color)) {
+      fill(this._color);
+    }
+  }
+
+  stroke() {
+    if (this._border && this._borderVisible) {
+      strokeWeight(this._borderWeight);
+      stroke(this._borderColor);
+    } else {
+      noStroke();
+    }
+  }
+
+  appearance() {
+    this.dropShadow();
+    this.blur();
+    this.fill();
+    this.stroke();
+  }
+
+  shape() {
+    if (typeof this._size === 'number') {
+      this.callback(0, 0, this._size);
+    } else if (typeof this._size === 'object') {
+      this.callback(0, 0, this._size.width, this._size.height);
+    }
+  }
+
+  draw() {
+    push();
+    this.align();
+    this.rotate();
+    // this.background();
+    this.appearance();
+    this.shape();
+    pop();
   }
 }
 
@@ -91,36 +216,29 @@ export const exText = (
   string: string,
   vector: p5.Vector,
   size: number,
-  options?: {
-    color?: any;
-    align?: Align;
-    background?: Background;
-    dropShadow?: DropShadow;
-    rotate?: boolean | number;
-    blur?: boolean | number; 
-  }
+  options?: PrimitiveOptions
 ) => {
   /* options */
-  const _string = string ?? 'p5Ex', 
-        _vector = vector ?? createVector(width / 2, height / 2),
-        _size = size ?? 16,
-        _color = options?.color ?? 0,
-        _align = options?.align ?? 'corner',
-        _background = options?.background ?? false,
-        _backgroundVisible = options?.background?.visible ?? false,
-        _backgroundColor = options?.background?.color ?? 0,
-        _backgroundBorder = options?.background?.border ?? false,
-        _backgroundBorderVisible = options?.background?.border?.visible ?? false,
-        _backgroundBorderColor = options?.background?.border?.color ?? 0,
-        _backgroundBorderWeight = options?.background?.border?.weight ?? 2,
-        _dropShadow = options?.dropShadow ?? false,
-        _dropShadowVisible = options?.dropShadow?.visible ?? false,
-        _dropShadowOffsetX = options?.dropShadow?.offset?.x ?? 4,
-        _dropShadowOffsetY = options?.dropShadow?.offset?.y ?? 4,
-        _dropShadowBlur = options?.dropShadow?.blur ?? 4,
-        _dropShadowColor = options?.dropShadow?.color ?? 1,
-        _rotate = options?.rotate ?? false,
-        _blur = options?.blur ?? false;
+  const _string = string ?? 'p5Ex',
+    _vector = vector ?? createVector(width / 2, height / 2),
+    _size = size ?? 16,
+    _color = options?.color ?? color(0),
+    _align = options?.align ?? 'corner',
+    _background = options?.background ?? false,
+    _backgroundVisible = options?.background?.visible ?? false,
+    _backgroundColor = options?.background?.color ?? 0,
+    _backgroundBorder = options?.background?.border ?? false,
+    _backgroundBorderVisible = options?.background?.border?.visible ?? false,
+    _backgroundBorderColor = options?.background?.border?.color ?? 0,
+    _backgroundBorderWeight = options?.background?.border?.weight ?? 2,
+    _dropShadow = options?.dropShadow ?? false,
+    _dropShadowVisible = options?.dropShadow?.visible ?? false,
+    _dropShadowOffsetX = options?.dropShadow?.offset?.x ?? 4,
+    _dropShadowOffsetY = options?.dropShadow?.offset?.y ?? 4,
+    _dropShadowBlur = options?.dropShadow?.blur ?? 4,
+    _dropShadowColor = options?.dropShadow?.color ?? 1,
+    _rotate = options?.rotate ?? false,
+    _blur = options?.blur ?? false;
 
   push();
 
@@ -140,15 +258,15 @@ export const exText = (
   if (_background && _backgroundVisible) {
     push();
     resetAppearance();
-    if(_backgroundBorder && _backgroundBorderVisible){
+    if (_backgroundBorder && _backgroundBorderVisible) {
       stroke(_backgroundBorderColor);
       strokeWeight(_backgroundBorderWeight);
     }
-    exRect(_vector, textWidth(_string), _size, { color: _backgroundColor });
+    // exRect(_vector, textWidth(_string), _size, { color: _backgroundColor });
     pop();
   }
 
-  fill(_color);
+  // fill(_color);
 
   if (_dropShadow && _dropShadowVisible) {
     dropShadow({
@@ -159,7 +277,7 @@ export const exText = (
     });
   }
 
-  if(typeof _blur === 'number') {
+  if (typeof _blur === 'number') {
     blur(_blur);
   }
 
@@ -191,71 +309,75 @@ export const exTriangle = (vector1: p5.Vector, vector2: p5.Vector, vector3: p5.V
  * @param width - 幅
  * @param height - 高さ
  */
-export const exRect = (
-  vector: p5.Vector,
-  width: number,
-  height: number,
-  options?: {
-    color: any;
-    border?: Border;
-    dropShadow?: DropShadow;
-    rotate?: boolean | number;
-    rectMode?: CENTER | CORNER;
-  }
-) => {
-  const defaultOptions = {
-    color: 0,
-    border: {
-      visible: false,
-      color: 1,
-      weight: 2,
-    },
-    dropShadow: {
-      visible: false,
-      offset: {
-        x: 4,
-        y: 4,
-      },
-      blur: 4,
-      color: 1,
-    },
-    rotate: false,
-    rectMode: CORNER,
-  };
 
-  const useOptions = { ...defaultOptions, ...options };
-
-  push();
-
-  rectMode(useOptions.rectMode);
-  if (typeof useOptions.rotate === 'number') {
-    rotateCenter(vector, useOptions.rotate);
-  }
-
-  if (useOptions.dropShadow.visible) {
-    dropShadow({
-      x: useOptions.dropShadow.offset.x,
-      y: useOptions.dropShadow.offset.y,
-      blur: useOptions.dropShadow.blur,
-      color: useOptions.dropShadow.color,
-    });
-  }
-
-  if (typeof useOptions.color === 'string') {
-    fill(useOptions.color);
-  } else {
-    fill(useOptions.color);
-  }
-
-  noStroke();
-  useOptions.border.visible &&
-    stroke(useOptions.border.color) &&
-    strokeWeight(useOptions.border.weight);
-
-  rect(0, 0, width, height);
-
-  pop();
+export const exRect = (vector: p5.Vector, size: Size, options?: PrimitiveOptions) => {
+  new PrimitiveShape(rect, vector, size, options).draw();
 };
+// export const exRect = (
+//   vector: p5.Vector,
+//   width: number,
+//   height: number,
+//   options?: {
+//     color: any;
+//     border?: Border;
+//     dropShadow?: DropShadow;
+//     rotate?: boolean | number;
+//     rectMode?: CENTER | CORNER;
+//   }
+// ) => {
+//   const defaultOptions = {
+//     color: 0,
+//     border: {
+//       visible: false,
+//       color: 1,
+//       weight: 2,
+//     },
+//     dropShadow: {
+//       visible: false,
+//       offset: {
+//         x: 4,
+//         y: 4,
+//       },
+//       blur: 4,
+//       color: 1,
+//     },
+//     rotate: false,
+//     rectMode: CORNER,
+//   };
+
+//   const useOptions = { ...defaultOptions, ...options };
+
+//   push();
+
+//   rectMode(useOptions.rectMode);
+//   if (typeof useOptions.rotate === 'number') {
+//     rotateCenter(vector, useOptions.rotate);
+//   }
+
+//   if (useOptions.dropShadow.visible) {
+//     dropShadow({
+//       x: useOptions.dropShadow.offset.x,
+//       y: useOptions.dropShadow.offset.y,
+//       blur: useOptions.dropShadow.blur,
+//       color: useOptions.dropShadow.color,
+//     });
+//   }
+
+//   if (typeof useOptions.color === 'string') {
+//     fill(useOptions.color);
+//   } else {
+//     fill(useOptions.color);
+//   }
+
+//   noStroke();
+//   useOptions.border.visible &&
+//     stroke(useOptions.border.color) &&
+//     strokeWeight(useOptions.border.weight);
+
+//   rect(0, 0, width, height);
+
+//   pop();
+// };
 
 /**
  * point()の拡張
