@@ -31,5 +31,8 @@ declare global {
   var CORNER: typeof p5.prototype.CORNER;
   var CENTER: typeof p5.prototype.CENTER;
   var LEFT: typeof p5.prototype.LEFT;
+  var RIGHT: typeof p5.prototype.RIGHT;
   var TOP: typeof p5.prototype.TOP;
+  var BOTTOM: typeof p5.prototype.BOTTOM;
+  var BASELINE: typeof p5.prototype.BASELINE;
 }

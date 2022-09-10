@@ -2,8 +2,7 @@ import { dropShadow, rotateCenter, resetAppearance, blur } from './Function';
 import type p5 from 'p5';
 
 function implementsColor(arg: any): arg is typeof Color {
-  return arg !== null &&
-    typeof arg === 'object';
+  return arg !== null && typeof arg === 'object';
 }
 
 type Border = {
@@ -34,6 +33,15 @@ type Background = {
 
 type Size = { width: number; height: number } | number;
 
+type HorizAlign = typeof LEFT | typeof CENTER | typeof RIGHT;
+
+type VertAlign = typeof TOP | typeof BOTTOM | typeof CENTER;
+
+type TypeAlign = {
+  horiz: HorizAlign,
+  vert?: VertAlign | typeof BASELINE,
+};
+
 type PrimitiveOptions = {
   color?: p5.Color | number | string | false;
   align?: Align;
@@ -42,6 +50,11 @@ type PrimitiveOptions = {
   rotate?: boolean | number;
   blur?: boolean | number;
   border?: Border;
+};
+
+type TypeOptions = {
+  font?: string;
+  typeAlign?: TypeAlign;
 };
 
 // @ts-nocheck
@@ -72,7 +85,7 @@ class PrimitiveShape {
   protected _borderWeight: number;
 
   constructor(
-    public callback: typeof rect | typeof ellipse | typeof text,
+    public callback: typeof rect | typeof ellipse,
     public vector: p5.Vector,
     public size: number | Size,
     public options?: PrimitiveOptions
@@ -104,9 +117,9 @@ class PrimitiveShape {
   }
 
   align() {
-    if(this._align === 'corner') {
+    if (this._align === 'corner') {
       rectMode('corner');
-    } else if(this._align === 'center') {
+    } else if (this._align === 'center') {
       rectMode('center');
     }
   }
@@ -136,19 +149,6 @@ class PrimitiveShape {
     }
   }
 
-  // background() {
-  //   if (this._background && this._backgroundVisible) {
-  //     push();
-  //     resetAppearance();
-  //     if (this._backgroundBorder && this._backgroundBorderVisible) {
-  //       stroke(this._backgroundBorderColor);
-  //       strokeWeight(this._backgroundBorderWeight);
-  //     }
-  //     exRect(this._vector, textWidth(this._string), this._size, { color: this._backgroundColor });
-  //     pop();
-  //   }
-  // }
-
   fill() {
     if (this._color === false) {
       noFill();
@@ -156,7 +156,7 @@ class PrimitiveShape {
       fill(this._color);
     } else if (typeof this._color === 'number') {
       fill(this._color);
-    } else if(implementsColor(this._color)) {
+    } else if (implementsColor(this._color)) {
       fill(this._color);
     }
   }
@@ -189,7 +189,70 @@ class PrimitiveShape {
     push();
     this.align();
     this.rotate();
-    // this.background();
+    this.appearance();
+    this.shape();
+    pop();
+  }
+}
+
+class Text extends PrimitiveShape {
+  public _string: string;
+  public _font: string;
+  public _typeAlign: TypeAlign | boolean;
+  public _typeAlignHoriz: HorizAlign;
+  public _typeAlignVert: VertAlign | typeof BASELINE | false;
+
+  constructor(
+    public string: string,
+    public vector: p5.Vector,
+    public size: number,
+    public options?: PrimitiveOptions & TypeOptions,
+  ) {
+    super(text, vector, size, options);
+    this._string = string;
+    this._font = this.options?.font ?? 'serif';
+    this._typeAlign = this.options?.typeAlign ?? false;
+    this._typeAlignHoriz = this.options?.typeAlign?.horiz ?? LEFT;
+    this._typeAlignVert = this.options?.typeAlign?.vert ?? false;
+  }
+
+  background() {
+    if (this._background && this._backgroundVisible) {
+      push();
+      resetAppearance();
+      if (this._backgroundBorder && this._backgroundBorderVisible) {
+        stroke(this._backgroundBorderColor);
+        strokeWeight(this._backgroundBorderWeight);
+      }
+      if (typeof this._size === 'number') {
+        textSize(this._size);
+        exRect(
+          createVector(0,0),
+          { width: textWidth(this._string), height: this._size },
+          { color: this._backgroundColor }
+        );
+      }
+      pop();
+    }
+  }
+
+  shape() {
+    if (typeof this._size === 'number') {
+      if(this._typeAlignVert) {
+        textAlign(this._typeAlignHoriz, this._typeAlignVert);
+      } else {
+        textAlign(this._typeAlignHoriz);
+      }
+      textSize(this._size);
+      text(this._string, 0, 0);
+    }
+  }
+
+  draw() {
+    push();
+    this.align();
+    this.rotate();
+    this.background();
     this.appearance();
     this.shape();
     pop();
@@ -216,74 +279,9 @@ export const exText = (
   string: string,
   vector: p5.Vector,
   size: number,
-  options?: PrimitiveOptions
+  options?: PrimitiveOptions & TypeOptions
 ) => {
-  /* options */
-  const _string = string ?? 'p5Ex',
-    _vector = vector ?? createVector(width / 2, height / 2),
-    _size = size ?? 16,
-    _color = options?.color ?? color(0),
-    _align = options?.align ?? 'corner',
-    _background = options?.background ?? false,
-    _backgroundVisible = options?.background?.visible ?? false,
-    _backgroundColor = options?.background?.color ?? 0,
-    _backgroundBorder = options?.background?.border ?? false,
-    _backgroundBorderVisible = options?.background?.border?.visible ?? false,
-    _backgroundBorderColor = options?.background?.border?.color ?? 0,
-    _backgroundBorderWeight = options?.background?.border?.weight ?? 2,
-    _dropShadow = options?.dropShadow ?? false,
-    _dropShadowVisible = options?.dropShadow?.visible ?? false,
-    _dropShadowOffsetX = options?.dropShadow?.offset?.x ?? 4,
-    _dropShadowOffsetY = options?.dropShadow?.offset?.y ?? 4,
-    _dropShadowBlur = options?.dropShadow?.blur ?? 4,
-    _dropShadowColor = options?.dropShadow?.color ?? 1,
-    _rotate = options?.rotate ?? false,
-    _blur = options?.blur ?? false;
-
-  push();
-
-  textSize(_size);
-
-  if (_rotate && typeof _rotate !== 'boolean') {
-    rotateCenter(_vector, _rotate);
-  } else {
-    exTranslate(_vector);
-  }
-
-  const isAlignCorner = _align === 'corner';
-  const align = isAlignCorner ? CORNER : CENTER;
-  textAlign(isAlignCorner ? LEFT : CENTER, isAlignCorner ? TOP : CENTER);
-  rectMode(align);
-
-  if (_background && _backgroundVisible) {
-    push();
-    resetAppearance();
-    if (_backgroundBorder && _backgroundBorderVisible) {
-      stroke(_backgroundBorderColor);
-      strokeWeight(_backgroundBorderWeight);
-    }
-    // exRect(_vector, textWidth(_string), _size, { color: _backgroundColor });
-    pop();
-  }
-
-  // fill(_color);
-
-  if (_dropShadow && _dropShadowVisible) {
-    dropShadow({
-      x: _dropShadowOffsetX,
-      y: _dropShadowOffsetY,
-      blur: _dropShadowBlur,
-      color: _dropShadowColor,
-    });
-  }
-
-  if (typeof _blur === 'number') {
-    blur(_blur);
-  }
-
-  text(_string, 0, 0);
-
-  pop();
+  new Text(string, vector, size, options).draw();
 };
 
 /**
@@ -306,78 +304,12 @@ export const exTriangle = (vector1: p5.Vector, vector2: p5.Vector, vector3: p5.V
 /**
  * rect()の拡張
  * @param vector - ベクトル
- * @param width - 幅
- * @param height - 高さ
+ * @param size - サイズ
+ * @param options - オプション
  */
-
 export const exRect = (vector: p5.Vector, size: Size, options?: PrimitiveOptions) => {
   new PrimitiveShape(rect, vector, size, options).draw();
 };
-// export const exRect = (
-//   vector: p5.Vector,
-//   width: number,
-//   height: number,
-//   options?: {
-//     color: any;
-//     border?: Border;
-//     dropShadow?: DropShadow;
-//     rotate?: boolean | number;
-//     rectMode?: CENTER | CORNER;
-//   }
-// ) => {
-//   const defaultOptions = {
-//     color: 0,
-//     border: {
-//       visible: false,
-//       color: 1,
-//       weight: 2,
-//     },
-//     dropShadow: {
-//       visible: false,
-//       offset: {
-//         x: 4,
-//         y: 4,
-//       },
-//       blur: 4,
-//       color: 1,
-//     },
-//     rotate: false,
-//     rectMode: CORNER,
-//   };
-
-//   const useOptions = { ...defaultOptions, ...options };
-
-//   push();
-
-//   rectMode(useOptions.rectMode);
-//   if (typeof useOptions.rotate === 'number') {
-//     rotateCenter(vector, useOptions.rotate);
-//   }
-
-//   if (useOptions.dropShadow.visible) {
-//     dropShadow({
-//       x: useOptions.dropShadow.offset.x,
-//       y: useOptions.dropShadow.offset.y,
-//       blur: useOptions.dropShadow.blur,
-//       color: useOptions.dropShadow.color,
-//     });
-//   }
-
-//   if (typeof useOptions.color === 'string') {
-//     fill(useOptions.color);
-//   } else {
-//     fill(useOptions.color);
-//   }
-
-//   noStroke();
-//   useOptions.border.visible &&
-//     stroke(useOptions.border.color) &&
-//     strokeWeight(useOptions.border.weight);
-
-//   rect(0, 0, width, height);
-
-//   pop();
-// };
 
 /**
  * point()の拡張
