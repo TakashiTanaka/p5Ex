@@ -56,6 +56,7 @@ type TypeOptions = {
   font?: string;
   typeAlign?: TypeAlign;
   letterSpacing?: number;
+  wordSpacing?: number;
 };
 
 // @ts-nocheck
@@ -203,6 +204,7 @@ class Text extends PrimitiveShape {
   public _typeAlignHoriz: HorizAlign;
   public _typeAlignVert: VertAlign | typeof BASELINE | false;
   public _letterSpacing: number;
+  public _wordSpacing: number;
 
   constructor(
     public string: string,
@@ -217,6 +219,7 @@ class Text extends PrimitiveShape {
     this._typeAlignHoriz = this.options?.typeAlign?.horiz ?? LEFT;
     this._typeAlignVert = this.options?.typeAlign?.vert ?? false;
     this._letterSpacing = this.options?.letterSpacing;
+    this._wordSpacing = this.options?.wordSpacing;
   }
 
   background() {
@@ -250,6 +253,10 @@ class Text extends PrimitiveShape {
       // set letterSpacing
       if(typeof this._letterSpacing === 'number') {
         drawingContext.letterSpacing = `${this._letterSpacing}px`;
+      }
+      // set wordSpacing
+      if(typeof this._wordSpacing === 'number') {
+        drawingContext.wordSpacing = `${this._wordSpacing}px`;
       }
       // set font
       textFont(this._font);
