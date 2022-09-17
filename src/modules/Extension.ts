@@ -5,6 +5,10 @@ function implementsColor(arg: any): arg is typeof Color {
   return arg !== null && typeof arg === 'object';
 }
 
+function implementsGradient(arg: any): arg is Gradient {
+  return arg !== null && typeof arg === 'object' && 'colorStops' in arg;
+}
+
 type Border = {
   visible?: boolean;
   color?: any;
@@ -38,12 +42,20 @@ type HorizAlign = typeof LEFT | typeof CENTER | typeof RIGHT;
 type VertAlign = typeof TOP | typeof BOTTOM | typeof CENTER;
 
 type TypeAlign = {
-  horiz: HorizAlign,
-  vert?: VertAlign | typeof BASELINE,
+  horiz: HorizAlign;
+  vert?: VertAlign | typeof BASELINE;
+};
+
+type ColorStop = [number, typeof Color | string];
+
+type Gradient = {
+  type: 'linear';
+  colorStops: ColorStop[];
+  rad: number;
 };
 
 type PrimitiveOptions = {
-  color?: p5.Color | number | string | false;
+  color?: p5.Color | number | string | false | Gradient;
   align?: Align;
   background?: Background;
   dropShadow?: DropShadow;
@@ -61,10 +73,18 @@ type TypeOptions = {
 
 // @ts-nocheck
 
+/**
+ * @class PrimitiveShape
+ * rect, ellipse, triangleの拡張用クラス
+ */
 class PrimitiveShape {
   protected _vector: p5.Vector;
   protected _size: number | Size;
-  protected _color: p5.Color | string | number | false;
+  protected _center: p5.Vector;
+  protected _edgeVector: p5.Vector;
+  protected _radius: number;
+  protected _diameter: number;
+  protected _color: p5.Color | string | number | false | Gradient;
   protected _align: Align;
   protected _background: Background | boolean;
   protected _backgroundVisible: boolean;
@@ -96,6 +116,10 @@ class PrimitiveShape {
     this._vector = this.vector ?? createVector(width / 2, height / 2);
     this._size = this.size ?? 16;
     this._color = this.options?.color ?? 'black';
+    this._center = this._align === 'center' ? this._vector : this.calcCenter();
+    this._edgeVector = this.calcEdgeVector();
+    this._radius = this.calcRadius();
+    this._diameter = this._radius * 2;
     this._align = this.options?.align ?? 'corner';
     this._background = this.options?.background ?? false;
     this._backgroundVisible = this.options?.background?.visible ?? false;
@@ -118,6 +142,45 @@ class PrimitiveShape {
     this._borderWeight = this.options?.border?.weight ?? 2;
   }
 
+  /**
+   * 半径を計算
+   * @memberof PrimitiveShape
+   */
+  calcRadius(): number {
+    return p5.Vector.dist(this._edgeVector, this._center);
+  }
+
+  /**
+   * オブジェクトの左上（左角）のベクトルを計算
+   * @memberof PrimitiveShape
+   */
+  calcEdgeVector(): p5.Vector {
+    if (this._align === 'center') {
+      return typeof this._size === 'number'
+        ? createVector(this._vector.x - this._size, this._vector.y - this._size)
+        : createVector(this._vector.x - this._size.width, this._vector.y - this._size.height);
+    } else {
+      return this._vector;
+    }
+  }
+
+  /**
+   * オブジェクトの中心点を計算
+   * @memberof PrimitiveShape
+   */
+  calcCenter(): p5.Vector {
+    let cornerVector;
+    if (typeof this._size === 'number') {
+      cornerVector = createVector(this._vector.x + this._size, this._vector.y + this._size);
+    } else {
+      cornerVector = createVector(
+        this._vector.x + this._size.width,
+        this._vector.y + this._size.height
+      );
+    }
+    return p5.Vector.lerp(this._vector, cornerVector, 0.5);
+  }
+
   align() {
     if (this._align === 'corner') {
       rectMode('corner');
@@ -134,6 +197,10 @@ class PrimitiveShape {
     }
   }
 
+  /**
+   * オブジェクトのシャドウ
+   * @memberof PrimitiveShape
+   */
   dropShadow() {
     if (this._dropShadow && this._dropShadowVisible) {
       dropShadow({
@@ -145,12 +212,57 @@ class PrimitiveShape {
     }
   }
 
+  /**
+   * オブジェクトのぼかし
+   * @memberof PrimitiveShape
+   */
   blur() {
     if (typeof this._blur === 'number') {
       blur(this._blur);
     }
   }
 
+  /**
+   * グラデーションのセッティング
+   * @memberof PrimitiveShape
+   */
+  gradientSetting(colorStops: ColorStop[], rad: number) {
+
+    const oppositeRad = rad + PI;
+
+    const gradientPoint = {
+      start: createVector(
+        this._radius * cos(rad),
+        this._radius * sin(rad)
+      ),
+      end: createVector(
+        this._radius * cos(oppositeRad),
+        this._radius * sin(oppositeRad)
+      ),
+    };
+
+    const gradient = drawingContext.createLinearGradient(
+      gradientPoint.start.x,
+      gradientPoint.start.y,
+      gradientPoint.end.x,
+      gradientPoint.end.y
+    );
+    
+    const addColorStop = (gradient: any, colorStops: ColorStop[]) => {
+      colorStops.forEach(colorStop => {
+        gradient.addColorStop(colorStop[0], colorStop[1]);
+      });
+    };
+
+    addColorStop(gradient, colorStops);
+
+    drawingContext.fillStyle = gradient;
+  }
+
+  /**
+   * オブジェクトの塗り
+   * @memberof PrimitiveShape
+   */
   fill() {
     if (this._color === false) {
       noFill();
@@ -158,11 +270,17 @@ class PrimitiveShape {
       fill(this._color);
     } else if (typeof this._color === 'number') {
       fill(this._color);
+    } else if (implementsGradient(this._color)) {
+      this.gradientSetting(this._color?.colorStops, this._color?.rad);
     } else if (implementsColor(this._color)) {
       fill(this._color);
     }
   }
 
+  /**
+   * オブジェクトの線
+   * @memberof PrimitiveShape
+   */
   stroke() {
     if (this._border && this._borderVisible) {
       strokeWeight(this._borderWeight);
@@ -172,13 +290,21 @@ class PrimitiveShape {
     }
   }
 
+  /**
+   * オブジェクトの見た目
+   * @memberof PrimitiveShape
+   */
   appearance() {
     this.dropShadow();
     this.blur();
-    this.fill();
     this.stroke();
+    this.fill();
   }
 
+  /**
+   * オブジェクトの形
+   * @memberof PrimitiveShape
+   */
   shape() {
     if (typeof this._size === 'number') {
       this.callback(0, 0, this._size);
@@ -187,6 +313,10 @@ class PrimitiveShape {
     }
   }
 
+  /**
+   * 描画
+   * @memberof PrimitiveShape
+   */
   draw() {
     push();
     this.align();
@@ -210,7 +340,7 @@ class Text extends PrimitiveShape {
     public string: string,
     public vector: p5.Vector,
     public size: number,
-    public options?: PrimitiveOptions & TypeOptions,
+    public options?: PrimitiveOptions & TypeOptions
   ) {
     super(text, vector, size, options);
     this._string = string;
@@ -233,7 +363,7 @@ class Text extends PrimitiveShape {
       if (typeof this._size === 'number') {
         textSize(this._size);
         exRect(
-          createVector(0,0),
+          createVector(0, 0),
           { width: textWidth(this._string), height: this._size },
           { color: this._backgroundColor }
         );
@@ -245,17 +375,17 @@ class Text extends PrimitiveShape {
   shape() {
     if (typeof this._size === 'number') {
       // set align
-      if(this._typeAlignVert) {
+      if (this._typeAlignVert) {
         textAlign(this._typeAlignHoriz, this._typeAlignVert);
       } else {
         textAlign(this._typeAlignHoriz);
       }
       // set letterSpacing
-      if(typeof this._letterSpacing === 'number') {
+      if (typeof this._letterSpacing === 'number') {
         drawingContext.letterSpacing = `${this._letterSpacing}px`;
       }
       // set wordSpacing
-      if(typeof this._wordSpacing === 'number') {
+      if (typeof this._wordSpacing === 'number') {
         drawingContext.wordSpacing = `${this._wordSpacing}px`;
       }
       // set font
