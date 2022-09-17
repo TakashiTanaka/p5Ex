@@ -1,6 +1,6 @@
 {
   "name": "my-p5-ex",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "",
   "main": "./dist/p5ex.js",
   "types": "./types/src/index.d.ts",
