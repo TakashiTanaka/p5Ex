@@ -5,17 +5,17 @@ import { exTranslate } from './Extension';
 
 /**
  * 画面領域一杯のカンバスを作成する
- * @returns {function} createCanvas(windowWidth, windowHeight)
+ * @returns createCanvas(windowWidth, windowHeight)
  */
-export const createFullCanvas = () => createCanvas(windowWidth, windowHeight);
+export const createFullCanvas = (): p5.Renderer => createCanvas(windowWidth, windowHeight);
 
-/** 
+/**
  * ブラー
  * @param amount - ブラー量
- */ 
+ */
 export const blur = (amount: number) => {
   drawingContext.filter = `blur(${amount}px)`;
-}
+};
 
 /**
  * ドロップシャドウ
@@ -28,9 +28,9 @@ export const dropShadow = (options: {
   color?: string | p5.Color;
 }) => {
   const _x = options?.x ?? 4,
-        _y = options?.y ?? 4,
-        _blur = options?.blur ?? 4,
-        _color = options?.color ?? 'black';
+    _y = options?.y ?? 4,
+    _blur = options?.blur ?? 4,
+    _color = options?.color ?? 'black';
   drawingContext.shadowOffsetX = _x;
   drawingContext.shadowOffsetY = _y;
   drawingContext.shadowBlur = _blur;
@@ -39,11 +39,11 @@ export const dropShadow = (options: {
 
 /**
  * ランダムな整数値を得る（引数の値も範囲に含む）
- * @param {number} min 最小値
- * @param {number} max 最大値
- * @return {number} ランダムな整数値
+ * @param min 最小値
+ * @param max 最大値
+ * @return ランダムな整数値
  */
-export const randomInt = (min, max) => {
+export const randomInt = (min: number, max: number): number => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -52,7 +52,7 @@ export const randomInt = (min, max) => {
 /**
  * ランダムな色を返す関数
  */
-export const randomColor = () => color(random(), random(), random());
+export const randomColor = (): p5.Color => color(random(), random(), random());
 
 /**
  * コールバック関数を指定回数繰り返す
@@ -333,26 +333,24 @@ export const randomAlphabet = (): string => {
   return alphabets[randomInt(0, alphabets.length - 1)];
 };
 
-
 /**
  * strokeとfillをリセットする関数
- */ 
+ */
 export const resetAppearance = () => {
   noStroke();
   noFill();
-}
+};
 
-/** 
+/**
  * undefinedか判定
-*/
+ */
 export const isUndefined = (value: any): boolean => {
   return value === void 0;
-}
+};
 
-/** 
+/**
  * オプション値の初期値を設定
-*/
+ */
 export const initArgument = (value: any): any => {
   return value === void 0;
-}
-
+};

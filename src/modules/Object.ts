@@ -3,6 +3,10 @@
 import type p5 from 'p5';
 import * as ex from './Extension';
 
+/**
+ * オブジェクトの基本クラス
+ * @class Obj
+ */
 export class Obj {
   constructor(vector: p5.Vector, width: number, height: number) {
     this.position = vector;
