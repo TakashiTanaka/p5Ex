@@ -10,7 +10,8 @@
   "scripts": {
     "start": "webpack serve",
     "preBuild": "MODE=development webpack build",
-    "build": "MODE=production webpack build"
+    "build": "MODE=production webpack build",
+    "watch": "MODE=development webpack --watch"
   },
   "keywords": [],
   "author": "",
