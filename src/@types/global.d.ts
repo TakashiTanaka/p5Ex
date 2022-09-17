@@ -25,9 +25,12 @@ declare global {
   var noFill: typeof p5.prototype.noFill;
   var translate: typeof p5.prototype.translate;
   var createVector: typeof p5.prototype.createVector;
+  var createCanvas: typeof p5.prototype.createCanvas;
   var textFont: typeof p5.prototype.textFont;
   var cos: typeof p5.prototype.cos;
   var sin: typeof p5.prototype.sin;
+  var windowWidth: typeof p5.prototype.windowWidth;
+  var windowHeight: typeof p5.prototype.windowHeight;
   var width: typeof p5.prototype.width;
   var height: typeof p5.prototype.height;
   var drawingContext: typeof p5.prototype.drawingContext;
