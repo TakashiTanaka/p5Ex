@@ -1,4 +1,4 @@
-import type p5 from 'p5';
+import type p5 from 'P5';
 
 declare global {
   var Color: typeof p5.Color;
@@ -26,6 +26,8 @@ declare global {
   var translate: typeof p5.prototype.translate;
   var createVector: typeof p5.prototype.createVector;
   var textFont: typeof p5.prototype.textFont;
+  var cos: typeof p5.prototype.cos;
+  var sin: typeof p5.prototype.sin;
   var width: typeof p5.prototype.width;
   var height: typeof p5.prototype.height;
   var drawingContext: typeof p5.prototype.drawingContext;
@@ -36,4 +38,5 @@ declare global {
   var TOP: typeof p5.prototype.TOP;
   var BOTTOM: typeof p5.prototype.BOTTOM;
   var BASELINE: typeof p5.prototype.BASELINE;
+  var PI: typeof p5.prototype.PI;
 }

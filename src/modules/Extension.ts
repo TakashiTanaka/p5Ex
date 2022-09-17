@@ -1,5 +1,5 @@
 import { dropShadow, rotateCenter, resetAppearance, blur } from './Function';
-import type p5 from 'p5';
+import p5 from 'P5';
 
 function implementsColor(arg: any): arg is typeof Color {
   return arg !== null && typeof arg === 'object';
