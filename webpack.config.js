@@ -18,6 +18,10 @@ module.exports = {
     },
   },
 
+  externals: {
+    P5: 'p5'
+  },
+
   devServer: {
     static: [
       {
