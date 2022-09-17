@@ -1,5 +1,19 @@
 import { dropShadow, rotateCenter, resetAppearance, blur } from './Function';
 import p5 from 'P5';
+import {
+  Border,
+  DropShadow,
+  Gradient,
+  Size,
+  Align,
+  Background,
+  PrimitiveOptions,
+  ColorStop,
+  TypeAlign,
+  HorizAlign,
+  VertAlign,
+  TypeOptions,
+} from '../@types/type';
 
 function implementsColor(arg: any): arg is typeof Color {
   return arg !== null && typeof arg === 'object';
@@ -8,68 +22,6 @@ function implementsColor(arg: any): arg is typeof Color {
 function implementsGradient(arg: any): arg is Gradient {
   return arg !== null && typeof arg === 'object' && 'colorStops' in arg;
 }
-
-type Border = {
-  visible?: boolean;
-  color?: any;
-  weight?: number;
-};
-
-type DropShadow = {
-  visible: boolean;
-  offset?: {
-    x?: number;
-    y?: number;
-  };
-  blur?: number;
-  color?: any;
-};
-
-type Align = 'corner' | 'center';
-
-type Background = {
-  visible: boolean;
-  color?: any;
-  border?: Border;
-  blur?: number | boolean;
-  dropShadow?: DropShadow | boolean;
-};
-
-type Size = { width: number; height: number } | number;
-
-type HorizAlign = typeof LEFT | typeof CENTER | typeof RIGHT;
-
-type VertAlign = typeof TOP | typeof BOTTOM | typeof CENTER;
-
-type TypeAlign = {
-  horiz: HorizAlign;
-  vert?: VertAlign | typeof BASELINE;
-};
-
-type ColorStop = [number, typeof Color | string];
-
-type Gradient = {
-  type: 'linear';
-  colorStops: ColorStop[];
-  rad: number;
-};
-
-type PrimitiveOptions = {
-  color?: p5.Color | number | string | false | Gradient;
-  align?: Align;
-  background?: Background;
-  dropShadow?: DropShadow;
-  rotate?: boolean | number;
-  blur?: boolean | number;
-  border?: Border;
-};
-
-type TypeOptions = {
-  font?: string;
-  typeAlign?: TypeAlign;
-  letterSpacing?: number;
-  wordSpacing?: number;
-};
 
 // @ts-nocheck
 
@@ -114,13 +66,13 @@ class PrimitiveShape {
   ) {
     this.options = options;
     this._vector = this.vector ?? createVector(width / 2, height / 2);
+    this._align = this.options?.align ?? 'corner';
     this._size = this.size ?? 16;
     this._color = this.options?.color ?? 'black';
-    this._center = this._align === 'center' ? this._vector : this.calcCenter();
+    this._center = this._align === 'center' ? createVector(0, 0) : this.calcCenter();
     this._edgeVector = this.calcEdgeVector();
-    this._radius = this.calcRadius();
+    this._radius = p5.Vector.dist(this._edgeVector, this._center);
     this._diameter = this._radius * 2;
-    this._align = this.options?.align ?? 'corner';
     this._background = this.options?.background ?? false;
     this._backgroundVisible = this.options?.background?.visible ?? false;
     this._backgroundColor = this.options?.background?.color ?? 0;
@@ -142,12 +94,8 @@ class PrimitiveShape {
     this._borderWeight = this.options?.border?.weight ?? 2;
   }
 
-  /**
-   * 半径を計算
-   * @memberof PrimitiveShape
-   */
-  calcRadius(): number {
-    return p5.Vector.dist(this._edgeVector, this._center);
+  debug() {
+    console.dir(this);
   }
 
   /**
@@ -157,30 +105,27 @@ class PrimitiveShape {
   calcEdgeVector(): p5.Vector {
     if (this._align === 'center') {
       return typeof this._size === 'number'
-        ? createVector(this._vector.x - this._size, this._vector.y - this._size)
-        : createVector(this._vector.x - this._size.width, this._vector.y - this._size.height);
+        ? createVector(-this._size / 2, -this._size / 2)
+        : createVector(-this._size.width / 2, -this._size.height / 2);
     } else {
-      return this._vector;
+      return createVector(0, 0);
     }
   }
 
   /**
-   * オブジェクトの中心点を計算
+   * 中心点を計算
    * @memberof PrimitiveShape
    */
   calcCenter(): p5.Vector {
-    let cornerVector;
-    if (typeof this._size === 'number') {
-      cornerVector = createVector(this._vector.x + this._size, this._vector.y + this._size);
-    } else {
-      cornerVector = createVector(
-        this._vector.x + this._size.width,
-        this._vector.y + this._size.height
-      );
-    }
-    return p5.Vector.lerp(this._vector, cornerVector, 0.5);
+    return typeof this._size === 'number'
+      ? createVector(this._size / 2, this._size / 2)
+      : createVector(this._size.width / 2, this._size.height / 2);
   }
 
+  /**
+   * 原点位置
+   * @memberof PrimitiveShape
+   */
   align() {
     if (this._align === 'corner') {
       rectMode('corner');
@@ -189,6 +134,10 @@ class PrimitiveShape {
     }
   }
 
+  /**
+   * 回転
+   * @memberof PrimitiveShape
+   */
   rotate() {
     if (this._rotate && typeof this._rotate !== 'boolean') {
       rotateCenter(this._vector, this._rotate);
@@ -198,7 +147,7 @@ class PrimitiveShape {
   }
 
   /**
-   * オブジェクトのシャドウ
+   * シャドウ
    * @memberof PrimitiveShape
    */
   dropShadow() {
@@ -213,7 +162,7 @@ class PrimitiveShape {
   }
 
   /**
-   * オブジェクトのぼかし
+   * ぼかし
    * @memberof PrimitiveShape
    */
   blur() {
@@ -227,17 +176,16 @@ class PrimitiveShape {
    * @memberof PrimitiveShape
    */
   gradientSetting(colorStops: ColorStop[], rad: number) {
-
     const oppositeRad = rad + PI;
 
     const gradientPoint = {
       start: createVector(
-        this._radius * cos(rad),
-        this._radius * sin(rad)
+        this._center.x + this._radius * cos(rad),
+        this._center.y + this._radius * sin(rad)
       ),
       end: createVector(
-        this._radius * cos(oppositeRad),
-        this._radius * sin(oppositeRad)
+        this._center.x + this._radius * cos(oppositeRad),
+        this._center.y + this._radius * sin(oppositeRad)
       ),
     };
 
@@ -247,7 +195,7 @@ class PrimitiveShape {
       gradientPoint.end.x,
       gradientPoint.end.y
     );
-    
+
     const addColorStop = (gradient: any, colorStops: ColorStop[]) => {
       colorStops.forEach(colorStop => {
         gradient.addColorStop(colorStop[0], colorStop[1]);
@@ -260,7 +208,7 @@ class PrimitiveShape {
   }
 
   /**
-   * オブジェクトの塗り
+   * 塗り
    * @memberof PrimitiveShape
    */
   fill() {
@@ -278,7 +226,7 @@ class PrimitiveShape {
   }
 
   /**
-   * オブジェクトの線
+   * 線
    * @memberof PrimitiveShape
    */
   stroke() {
@@ -291,7 +239,7 @@ class PrimitiveShape {
   }
 
   /**
-   * オブジェクトの見た目
+   * 見た目
    * @memberof PrimitiveShape
    */
   appearance() {
@@ -302,7 +250,7 @@ class PrimitiveShape {
   }
 
   /**
-   * オブジェクトの形
+   * 形
    * @memberof PrimitiveShape
    */
   shape() {
@@ -324,6 +272,7 @@ class PrimitiveShape {
     this.appearance();
     this.shape();
     pop();
+    return this;
   }
 }
 
@@ -403,6 +352,7 @@ class Text extends PrimitiveShape {
     this.appearance();
     this.shape();
     pop();
+    return this;
   }
 }
 
@@ -455,7 +405,7 @@ export const exTriangle = (vector1: p5.Vector, vector2: p5.Vector, vector3: p5.V
  * @param options - オプション
  */
 export const exRect = (vector: p5.Vector, size: Size, options?: PrimitiveOptions) => {
-  new PrimitiveShape(rect, vector, size, options).draw();
+  return new PrimitiveShape(rect, vector, size, options).draw();
 };
 
 /**
