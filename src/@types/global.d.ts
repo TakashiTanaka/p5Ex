@@ -1,7 +1,5 @@
 import type p5 from 'P5';
 
-declare module 'P5';
-
 declare global {
   var Color: typeof p5.Color;
   var color: typeof p5.prototype.color;
