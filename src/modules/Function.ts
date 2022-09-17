@@ -67,15 +67,15 @@ export const iterator = (count, fn) => {
 
 /**
  * X座標の中心を返す関数
- * @returns number
+ * @returns X座標の中心
  */
-export const centerX = () => width / 2;
+export const centerX = (): number => width / 2;
 
 /**
  * Y座標の中心を返す関数
- * @returns number
+ * @returns Y座標の中心
  */
-export const centerY = () => height / 2;
+export const centerY = (): number => height / 2;
 
 /**
  * 引数で受け取ったベクトル間を補完して、配列で返す
@@ -300,7 +300,7 @@ const isoscelesRightTriangle = (x, y, size) => {
 };
 
 // もし0未満か360超過だったら正規化した値を返す
-const normalizeHSB = hue => {
+const normalizeHSB = (hue): number => {
   if (hue > 360) {
     return normalizeHSB(hue - 360);
   } else if (hue < 0) {
@@ -311,9 +311,9 @@ const normalizeHSB = hue => {
 
 /**
  * アルファベットの配列を作成する関数
- * @return { Array }
+ * @return アルファベットの配列
  */
-const mkAlphabetArray = () => {
+const mkAlphabetArray = (): string[] => {
   let alphabet = [],
     startUnicode = 65,
     endUnicode = 90,
