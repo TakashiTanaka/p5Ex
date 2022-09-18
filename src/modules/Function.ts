@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import type p5 from 'p5';
+import type p5 from 'P5';
 import { exTranslate } from './Extension';
 
 /**
