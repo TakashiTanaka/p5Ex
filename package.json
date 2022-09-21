@@ -3,7 +3,7 @@
   "version": "1.0.22",
   "description": "",
   "main": "./dist/p5ex.js",
-  "types": "./types/src/index.d.ts",
+  "types": "./types/index.d.ts",
   "directories": {
     "test": "test"
   },
