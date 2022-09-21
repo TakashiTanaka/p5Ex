@@ -1,16 +1,40 @@
-import * as extension from './modules/Extension';
-import * as object from './modules/Object';
+import * as ext from './modules/Extension';
+import * as obj from './modules/Object';
 import * as func from './modules/Function';
-import * as utility from './modules/Utility';
+import * as util from './modules/Utility';
 
-export const Extension = extension;
-export const Object = object;
-export const Function = func;
-export const Utility = utility;
+import p5 from 'P5';
 
-// // モジュールをグローバルオブジェクト化する関数
-// const convertModulesToWindowObject = modules =>
-//   Object.entries(modules).forEach(module => (window[module[0]] = module[1]));
+/**
+ * 親となるclass
+ * 名前空間のような使用方法をしている
+ * @class P5ex
+ */
+ export class P5ex {
+  public ext;
+  public obj;
+  public func;
+  public util;
 
-// [Extension, Obj, Func, Util].forEach(module => convertModulesToWindowObject(module));
+  constructor() {
+    this.ext = ext;
+    this.obj = obj;
+    this.func = func;
+    this.util = util;
+  }
+}
 
+// p5の名前空間内のインタフェース、p5InstanceExtensionsにメソッドの型を追加することでプロトタイプ拡張
+declare module 'P5' {
+  export interface p5InstanceExtensions {
+    P5ex: P5ex;
+  }
+}
+
+// グローバルにp5が定義されていたら、
+// p5exをp5のprototypeに追加する
+if (p5) {
+  p5.prototype.P5ex = new P5ex();
+} else {
+  console.warn('p5 is not found...');
+}
