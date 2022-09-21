@@ -1,18 +1,21 @@
 {
   "compilerOptions": {
     "outDir": "./dist/",
+    "baseUrl": "./src",
+    // "typeRoots": ["@types"],
     "declaration": true,
-    "declarationDir": "./types",
+    "declarationDir": "./types/",
+    "declarationMap": true,
     "noImplicitAny": true,
     "module": "es6",
     "target": "es6",
-    "jsx": "react",
     "allowJs": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "sourceMap": true,
     "paths": {
-      "P5":["./node_modules/@types/p5"]
+      "P5": ["./node_modules/@types/p5"],
     }
-  }
+  },
+  "exclude": ["./webpack.config.js", "./types/**/*", "./dist/**/*"]
 }
