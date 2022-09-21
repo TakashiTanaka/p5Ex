@@ -13,10 +13,10 @@ module.exports = {
   /* 出力先 */
   output: {
     filename: 'p5ex.js',
-    library: {
-      name: 'p5ex',
-      type: 'amd',
-    },
+    // library: {
+    //   name: 'p5ex',
+    //   type: 'amd',
+    // },
   },
 
   plugins: [
