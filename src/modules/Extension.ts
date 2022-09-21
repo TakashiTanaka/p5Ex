@@ -1,19 +1,5 @@
 import { dropShadow, rotateCenter, resetAppearance, blur } from './Function';
 import p5 from 'P5';
-import {
-  Border,
-  DropShadow,
-  Gradient,
-  Size,
-  Align,
-  Background,
-  PrimitiveOptions,
-  ColorStop,
-  TypeAlign,
-  HorizAlign,
-  VertAlign,
-  TypeOptions,
-} from '../@types/type';
 
 function implementsColor(arg: any): arg is typeof Color {
   return arg !== null && typeof arg === 'object';
