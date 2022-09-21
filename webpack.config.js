@@ -1,6 +1,7 @@
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
   /* 出力モード */
@@ -17,6 +18,10 @@ module.exports = {
       type: 'amd',
     },
   },
+
+  plugins: [
+    // new BundleAnalyzerPlugin()
+  ],
 
   externals: {
     P5: 'p5'
