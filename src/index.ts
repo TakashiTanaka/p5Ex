@@ -24,8 +24,6 @@ import p5 from 'P5';
   }
 }
 
-export declare const P5: p5;
-
 // p5の名前空間内のインタフェース、p5InstanceExtensionsにメソッドの型を追加することでプロトタイプ拡張
 declare module 'P5' {
   export interface p5InstanceExtensions {
