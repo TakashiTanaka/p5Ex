@@ -1,4 +1,5 @@
 import { dropShadow, rotateCenter, resetAppearance, blur } from './Function';
+// @ts-ignore
 import p5 from 'P5';
 
 function implementsColor(arg: any): arg is typeof Color {

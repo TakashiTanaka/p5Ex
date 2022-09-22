@@ -3,6 +3,7 @@ import * as obj from './modules/Object';
 import * as func from './modules/Function';
 import * as util from './modules/Utility';
 
+// @ts-ignore
 import p5 from 'P5';
 
 /**
@@ -25,6 +26,7 @@ import p5 from 'P5';
 }
 
 // p5の名前空間内のインタフェース、p5InstanceExtensionsにメソッドの型を追加することでプロトタイプ拡張
+// @ts-ignore
 declare module 'P5' {
   export interface p5InstanceExtensions {
     P5ex: P5ex;
