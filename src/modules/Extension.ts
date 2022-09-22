@@ -2,6 +2,22 @@ import { dropShadow, rotateCenter, resetAppearance, blur } from './Function';
 // @ts-ignore
 import p5 from 'P5';
 
+import {
+  Border,
+  DropShadow,
+  Gradient,
+  Size,
+  Align,
+  Background,
+  PrimitiveOptions,
+  ColorStop,
+  TypeAlign,
+  HorizAlign,
+  VertAlign,
+  TypeOptions,
+  Shear,
+} from '../@types/global';
+
 function implementsColor(arg: any): arg is typeof Color {
   return arg !== null && typeof arg === 'object';
 }
@@ -16,7 +32,7 @@ function implementsGradient(arg: any): arg is Gradient {
  * @class PrimitiveShape
  * rect, ellipse, triangleの拡張用クラス
  */
-class PrimitiveShape {
+export class PrimitiveShape {
   protected _vector: p5.Vector;
   protected _size: number | Size;
   protected _center: p5.Vector;
@@ -44,6 +60,9 @@ class PrimitiveShape {
   protected _borderVisible: boolean;
   protected _borderColor: p5.Color;
   protected _borderWeight: number;
+  protected _shear: Shear | boolean;
+  protected _shearX: number;
+  protected _shearY: number;
 
   constructor(
     public callback: typeof rect | typeof ellipse,
@@ -79,6 +98,9 @@ class PrimitiveShape {
     this._borderVisible = this.options?.border?.visible ?? false;
     this._borderColor = this.options?.border?.color ?? 0;
     this._borderWeight = this.options?.border?.weight ?? 2;
+    this._shear = this.options?.shear ?? false;
+    this._shearX = this.options?.shear?.x ?? 0;
+    this._shearY = this.options?.shear?.y ?? 0;
   }
 
   debug() {
@@ -131,6 +153,26 @@ class PrimitiveShape {
     } else {
       exTranslate(this._vector);
     }
+  }
+
+  /**
+   * シアー
+   * @memberof PrimitiveShape
+   */
+  shear() {
+    if (this._shear) {
+      shearX(this._shearX);
+      shearY(this._shearY);
+    }
+  }
+
+  /**
+   * 変形・座標変換
+   * @memberof PrimitiveShape
+   */
+  transform() {
+    this.rotate();
+    this.shear();
   }
 
   /**
@@ -255,7 +297,7 @@ class PrimitiveShape {
   draw() {
     push();
     this.align();
-    this.rotate();
+    this.transform();
     this.appearance();
     this.shape();
     pop();

@@ -1,68 +1,75 @@
 import type p5 from 'P5';
 
+export type Border = {
+  visible?: boolean;
+  color?: any;
+  weight?: number;
+};
+
+export type DropShadow = {
+  visible: boolean;
+  offset?: {
+    x?: number;
+    y?: number;
+  };
+  blur?: number;
+  color?: any;
+};
+
+export type Align = 'corner' | 'center';
+
+export type Background = {
+  visible: boolean;
+  color?: any;
+  border?: Border;
+  blur?: number | boolean;
+  dropShadow?: DropShadow | boolean;
+};
+
+export type Size = { width: number; height: number } | number;
+
+export type HorizAlign = typeof LEFT | typeof CENTER | typeof RIGHT;
+
+export type VertAlign = typeof TOP | typeof BOTTOM | typeof CENTER;
+
+export type TypeAlign = {
+  horiz: HorizAlign;
+  vert?: VertAlign | typeof BASELINE;
+};
+
+export type ColorStop = [number, typeof Color | string];
+
+export type Gradient = {
+  type: 'linear';
+  colorStops: ColorStop[];
+  rad: number;
+};
+
+export type Shear = {
+  x?: number,
+  y?: number,
+}
+
+export type PrimitiveOptions = {
+  color?: p5.Color | number | string | false | Gradient;
+  align?: Align;
+  background?: Background;
+  dropShadow?: DropShadow;
+  rotate?: boolean | number;
+  blur?: boolean | number;
+  border?: Border;
+  shear?: Shear;
+};
+
+export type TypeOptions = {
+  font?: string;
+  typeAlign?: TypeAlign;
+  letterSpacing?: number;
+  wordSpacing?: number;
+};
+
+
 declare global {
-  export type Border = {
-    visible?: boolean;
-    color?: any;
-    weight?: number;
-  };
-
-  export type DropShadow = {
-    visible: boolean;
-    offset?: {
-      x?: number;
-      y?: number;
-    };
-    blur?: number;
-    color?: any;
-  };
-
-  export type Align = 'corner' | 'center';
-
-  export type Background = {
-    visible: boolean;
-    color?: any;
-    border?: Border;
-    blur?: number | boolean;
-    dropShadow?: DropShadow | boolean;
-  };
-
-  export type Size = { width: number; height: number } | number;
-
-  export type HorizAlign = typeof LEFT | typeof CENTER | typeof RIGHT;
-
-  export type VertAlign = typeof TOP | typeof BOTTOM | typeof CENTER;
-
-  export type TypeAlign = {
-    horiz: HorizAlign;
-    vert?: VertAlign | typeof BASELINE;
-  };
-
-  export type ColorStop = [number, typeof Color | string];
-
-  export type Gradient = {
-    type: 'linear';
-    colorStops: ColorStop[];
-    rad: number;
-  };
-
-  export type PrimitiveOptions = {
-    color?: p5.Color | number | string | false | Gradient;
-    align?: Align;
-    background?: Background;
-    dropShadow?: DropShadow;
-    rotate?: boolean | number;
-    blur?: boolean | number;
-    border?: Border;
-  };
-
-  export type TypeOptions = {
-    font?: string;
-    typeAlign?: TypeAlign;
-    letterSpacing?: number;
-    wordSpacing?: number;
-  };
-
   var Color: typeof p5.Color;
   var color: typeof p5.prototype.color;
   var line: typeof p5.prototype.line;
@@ -91,6 +98,8 @@ declare global {
   var textFont: typeof p5.prototype.textFont;
   var cos: typeof p5.prototype.cos;
   var sin: typeof p5.prototype.sin;
+  var shearX: typeof p5.prototype.shearX;
+  var shearY: typeof p5.prototype.shearY;
   var windowWidth: typeof p5.prototype.windowWidth;
   var windowHeight: typeof p5.prototype.windowHeight;
   var width: typeof p5.prototype.width;

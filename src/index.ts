@@ -30,7 +30,7 @@ import p5 from 'P5';
 declare module 'P5' {
   export interface p5InstanceExtensions {
     P5ex: P5ex;
-  }
+  }  
 }
 
 // グローバルにp5が定義されていたら、
