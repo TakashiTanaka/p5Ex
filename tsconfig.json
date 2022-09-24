@@ -17,5 +17,5 @@
       "P5": ["./node_modules/p5"],
     }
   },
-  "exclude": ["./webpack.config.js", "./types/**/*", "./dist/**/*"]
+  "exclude": ["./*.config.js","./types/**/*", "./dist/**/*", "./__tests__/**/*"]
 }
