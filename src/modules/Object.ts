@@ -1,3 +1,4 @@
+// @ts-ignore
 import type p5 from 'P5';
 import * as ex from './Extension';
 
