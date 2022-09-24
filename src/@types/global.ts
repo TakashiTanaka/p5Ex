@@ -1,6 +1,12 @@
 // @ts-ignore
 import type p5 from 'P5';
 
+export type MinNum = number;
+
+export type MaxNum = number;
+
+export type RandomRange = [MinNum, MaxNum];
+
 export type Border = {
   visible?: boolean;
   color?: any;
@@ -38,10 +44,10 @@ export type TypeAlign = {
   vert?: VertAlign | typeof BASELINE;
 };
 
-export type ColorStop = [number, typeof Color | string];
+export type ColorStop = [number, p5.Color | string];
 
 export type Gradient = {
-  type: 'linear';
+  type: 'linear' | 'radial' | 'conic';
   colorStops: ColorStop[];
   rad: number;
 };
@@ -69,6 +75,16 @@ export type TypeOptions = {
   wordSpacing?: number;
 };
 
+/**
+ * grid用のオプション
+ * @export
+ * @interface GridOptions
+ */
+export interface GridOptions {
+  mode: 'random';
+  min: number;
+  max: number;
+}
 
 declare global {
   var Color: typeof p5.Color;
@@ -76,6 +92,7 @@ declare global {
   var line: typeof p5.prototype.line;
   var circle: typeof p5.prototype.circle;
   var ellipse: typeof p5.prototype.ellipse;
+  var ellipseMode: typeof p5.prototype.ellipseMode;
   var triangle: typeof p5.prototype.triangle;
   var rect: typeof p5.prototype.rect;
   var point: typeof p5.prototype.point;
@@ -90,6 +107,11 @@ declare global {
   var pop: typeof p5.prototype.pop;
   var noStroke: typeof p5.prototype.noStroke;
   var stroke: typeof p5.prototype.stroke;
+  var rotate: typeof p5.prototype.rotate;
+  var ceil: typeof p5.prototype.ceil;
+  var floor: typeof p5.prototype.floor;
+  var char: typeof p5.prototype.char;
+  var textLeading: typeof p5.prototype.textLeading;
   var strokeWeight: typeof p5.prototype.strokeWeight;
   var fill: typeof p5.prototype.fill;
   var noFill: typeof p5.prototype.noFill;
@@ -101,6 +123,7 @@ declare global {
   var sin: typeof p5.prototype.sin;
   var shearX: typeof p5.prototype.shearX;
   var shearY: typeof p5.prototype.shearY;
+  var random: typeof p5.prototype.random;
   var windowWidth: typeof p5.prototype.windowWidth;
   var windowHeight: typeof p5.prototype.windowHeight;
   var width: typeof p5.prototype.width;
