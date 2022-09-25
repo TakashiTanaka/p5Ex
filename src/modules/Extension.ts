@@ -27,8 +27,8 @@ import {
  * @param diameter - 直径
  */
  export const exEllipse = (
-  vector: p5.Vector,
-  size: Size,
+  vector?: p5.Vector,
+  size?: Size,
   options?: PrimitiveOptions
 ): PrimitiveShape => new PrimitiveShape(ellipse, vector, size, options).draw();
 
@@ -48,9 +48,9 @@ export const exLine = (vector1: p5.Vector, vector2: p5.Vector) =>
  * @param options - オプション
  */
 export const exText = (
-  string: string,
-  vector: p5.Vector,
-  size: number,
+  string?: string,
+  vector?: p5.Vector,
+  size?: number,
   options?: PrimitiveOptions & TypeOptions
 ) => {
   new Text(string, vector, size, options).draw();
