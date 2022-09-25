@@ -1,18 +1,23 @@
 // @ts-ignore
 import type p5 from 'P5';
 
+/** 最小の値（0-1） */
 export type MinNum = number;
 
+/** 最大の値（0-1） */
 export type MaxNum = number;
 
+/** ランダム値の最小・最大値 */
 export type RandomRange = [MinNum, MaxNum];
 
+/** 線 */
 export type Border = {
   visible?: boolean;
   color?: any;
   weight?: number;
 };
 
+/** ドロップシャドウ */
 export type DropShadow = {
   visible: boolean;
   offset?: {
@@ -23,8 +28,10 @@ export type DropShadow = {
   color?: any;
 };
 
+/** 整列基準 */
 export type Align = 'corner' | 'center';
 
+/** 背景 */
 export type Background = {
   visible: boolean;
   color?: any;
@@ -33,32 +40,41 @@ export type Background = {
   dropShadow?: DropShadow | boolean;
 };
 
+/** サイズ */
 export type Size = { width: number; height: number } | number;
 
 export type HorizAlign = typeof LEFT | typeof CENTER | typeof RIGHT;
 
 export type VertAlign = typeof TOP | typeof BOTTOM | typeof CENTER;
 
+/** 文字の整列 */
 export type TypeAlign = {
   horiz: HorizAlign;
   vert?: VertAlign | typeof BASELINE;
 };
 
+/** 色 */
+export type PrimitiveColor = p5.Color | number | string | Gradient;
+
+/** グラデーションに渡す色情報 */
 export type ColorStop = [number, p5.Color | string];
 
+/** グラデーション */
 export type Gradient = {
   type: 'linear' | 'radial' | 'conic';
   colorStops: ColorStop[];
   rad: number;
 };
 
+/** シアー */
 export type Shear = {
   x?: number,
   y?: number,
 }
 
+/** PrimitiveShapeのオプション */
 export type PrimitiveOptions = {
-  color?: p5.Color | number | string | false | Gradient;
+  color?: PrimitiveColor | false;
   align?: Align;
   background?: Background;
   dropShadow?: DropShadow;
@@ -68,6 +84,7 @@ export type PrimitiveOptions = {
   shear?: Shear;
 };
 
+/** 文字のオプション */
 export type TypeOptions = {
   font?: string;
   typeAlign?: TypeAlign;
@@ -75,11 +92,7 @@ export type TypeOptions = {
   wordSpacing?: number;
 };
 
-/**
- * grid用のオプション
- * @export
- * @interface GridOptions
- */
+/** grid用のオプション */
 export interface GridOptions {
   mode: 'random';
   min: number;
