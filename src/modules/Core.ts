@@ -1,3 +1,4 @@
+import { PrimitiveColor } from './../@types/global';
 import { dropShadow, rotateCenter, resetAppearance, blur } from './Function';
 import { exTranslate, exRect } from './Extension';
 import { isColor, isGradient } from './TypeGuard';
@@ -20,14 +21,6 @@ import {
   Shear,
 } from '../@types/global';
 
-function implementsColor(arg: any): arg is typeof Color {
-  return arg !== null && typeof arg === 'object';
-}
-
-function implementsGradient(arg: any): arg is Gradient {
-  return arg !== null && typeof arg === 'object' && 'colorStops' in arg;
-}
-
 /**
  * @class PrimitiveShape
  * rect, ellipse, triangleの拡張用のコアクラス
@@ -39,11 +32,11 @@ export class PrimitiveShape {
   protected _edgeVector: p5.Vector;
   protected _radius: number;
   protected _diameter: number;
-  public _color: p5.Color | string | number | false | Gradient;
+  public _color: PrimitiveColor | false;
   protected _align: Align;
   protected _background: Background | boolean;
   protected _backgroundVisible: boolean;
-  protected _backgroundColor: any;
+  protected _backgroundColor: PrimitiveColor | false;
   protected _backgroundBorder: Border | boolean;
   protected _backgroundBorderVisible: boolean;
   protected _backgroundBorderColor: any;
@@ -230,7 +223,7 @@ export class PrimitiveShape {
    * @memberof PrimitiveShape
    */
   gradientSetting(colorStops: ColorStop[], rad: number): this {
-    if (!implementsGradient(this._color)) return;
+    if (!isGradient(this._color)) return;
 
     const addColorStop = (gradient: any, colorStops: ColorStop[]) => {
       colorStops.forEach(colorStop => {
@@ -271,14 +264,14 @@ export class PrimitiveShape {
         gradientPoint.end.y,
         this._diameter
       );
-    } else if(this._color.type === 'conic') {
+    } else if (this._color.type === 'conic') {
       gradientPoint = {
         center: createVector(this._center.x, this._center.y),
       };
       gradient = drawingContext.createConicGradient(
         rad,
         gradientPoint.center.x,
-        gradientPoint.center.y,
+        gradientPoint.center.y
       );
     }
 
@@ -299,9 +292,9 @@ export class PrimitiveShape {
       fill(this._color);
     } else if (typeof this._color === 'number') {
       fill(this._color);
-    } else if (implementsGradient(this._color)) {
+    } else if (isGradient(this._color)) {
       this.gradientSetting(this._color?.colorStops, this._color?.rad);
-    } else if (implementsColor(this._color)) {
+    } else if (isColor(this._color)) {
       fill(this._color);
     }
     return this;
