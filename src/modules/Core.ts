@@ -1,5 +1,6 @@
 import { dropShadow, rotateCenter, resetAppearance, blur } from './Function';
 import { exTranslate, exRect } from './Extension';
+import { isColor, isGradient } from './TypeGuard';
 // @ts-ignore
 import p5 from 'P5';
 
