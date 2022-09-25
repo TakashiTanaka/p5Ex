@@ -16,7 +16,7 @@ export const createFullCanvas = (): p5.Renderer => createCanvas(windowWidth, win
  * ブラー
  * @param amount - ブラー量
  * 
- * @example <caption>使用例</caption>
+ * @example
  * blur(20);
  * // 20pxのブラー
  */
@@ -49,6 +49,11 @@ export const dropShadow = (options: {
  * @param min 最小値
  * @param max 最大値
  * @return ランダムな整数値
+ * 
+ * @example
+ * const num = randomInt(1,5);
+ * console.log(num);
+ * // 2
  */
 export const randomInt = (min: MinNum, max: MaxNum): number => {
   min = Math.ceil(min);
@@ -58,6 +63,10 @@ export const randomInt = (min: MinNum, max: MaxNum): number => {
 
 /**
  * ランダムな色を返す関数
+ * 
+ * @example
+ * const c = randomColor();
+ * fill(c);
  */
 export const randomColor = (): p5.Color => color(random(), random(), random());
 
@@ -65,6 +74,14 @@ export const randomColor = (): p5.Color => color(random(), random(), random());
  * コールバック関数を指定回数繰り返す
  * @param count 繰り返す回数（整数）
  * @param callback コールバック関数
+ * 
+ * @example
+ * iterator(3, (i) => {
+ *  console.log(i);
+ * });
+ * // 0
+ * // 1
+ * // 2
  */
 export const iterator = (count: number, callback: (i?: number) => void):void => {
   for (let i = 0; i < count; i++) {
