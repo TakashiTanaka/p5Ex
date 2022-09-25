@@ -84,7 +84,7 @@ export const exVertex = (vector: p5.Vector) => vertex(vector.x, vector.y);
 export const exCurveVertex = (vector: p5.Vector) => curveVertex(vector.x, vector.y);
 
 /**
- * translate()
+ * translate()の拡張
  * @param vector - ベクトル
  */
 export const exTranslate = (vector: p5.Vector) => translate(vector.x, vector.y);
